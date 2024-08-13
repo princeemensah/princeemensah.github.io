@@ -17,6 +17,6 @@ social: true # includes social icons at the bottom of the page
 animated_background: false # includes an animated background
 ---
 
-I'm a master's student at the [African Institute for Mathematical Sciences (AIMS)]("https://nexteinstein.org/#")  pursuing the [African Master's in Machine Intelligence (AMMI) program]("https://aimsammi.org/"). 
+I'm a Master's student in machine learning at the [African Master's in Machine Intelligence (AMMI)]("https://aimsammi.org/"). I have a master's degree in mathematical sciences from the [African Institute for Mathematical Sciences (AIMS)]("https://nexteinstein.org/#").
 
 I am dedicated to building a career that leverages my creativity to develop machine learning algorithms, with the objective of fostering research and innovation.

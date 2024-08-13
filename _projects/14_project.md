@@ -1,11 +1,11 @@
 ---
 layout: page
-title: Image Classification
-description: Image classification with alexnet from scratch.
+title: Question Answering System
+description: In this project, I built a Question-Answering (QA) system designed to efficiently retrieve relevant passages from a corpus of documents in response to user queries. The system utilizes SentenceTransformers for embedding generation, Elasticsearch for data storage and retrieval, Flask for API development, and Streamlit for the user interface.
 
 
-img: assets/img/alexnet.jpg
-redirect: https://github.com/NajlaaNawaii/AlexNet-on-Cifar-Datasets
+img: assets/img/question_answering.png
+redirect: https://github.com/pmensah28/Question-Answering-System
 importance: 3
 category: GitHub Projects
 ---

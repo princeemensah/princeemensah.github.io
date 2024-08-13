@@ -1,11 +1,11 @@
 ---
 layout: page
-title: Image Classification
-description: Image classification with alexnet from scratch.
+title: Self-supervised Learning
+description: In this project, we implemented two self-supervised learning approaches; Simple Framework for Contrastive Learning of Visual Representations model for self-supervised learning (SimCLR) and DeepCluster on the CIFAR-10 dataset. 
 
 
-img: assets/img/alexnet.jpg
-redirect: https://github.com/NajlaaNawaii/AlexNet-on-Cifar-Datasets
+img: assets/img/self_supervised.png
+redirect: https://github.com/pmensah28/self-supervised-learning
 importance: 3
 category: GitHub Projects
 ---

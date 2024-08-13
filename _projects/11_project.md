@@ -1,7 +1,7 @@
 ---
 layout: page
-title: 21 Cassavage
-description: Cassava leaf disease classification. The web application uses a deep learning model to classify cassava leaf images into one of several categories to help identify common diseases.
+title: Cassava leaf disease classification
+description: The web application uses a deep learning model to classify cassava leaf images into one of several categories to help identify common diseases.
 
 
 img: assets/img/cassava-classifier.png

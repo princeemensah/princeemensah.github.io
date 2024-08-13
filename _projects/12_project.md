@@ -1,11 +1,11 @@
 ---
 layout: page
-title: Image Classification
-description: Image classification with alexnet from scratch.
+title: Transfer Learning
+description: Implementation of a neural network model to demonstrate transfer learning using the mnist dataset with 2 different approach; building from scratch, using pytorch with softmax regression. 
 
 
-img: assets/img/alexnet.jpg
-redirect: https://github.com/NajlaaNawaii/AlexNet-on-Cifar-Datasets
+img: assets/img/transfer_learning.png
+redirect: https://github.com/pmensah28/TL-From-Scratch
 importance: 3
 category: GitHub Projects
 ---
