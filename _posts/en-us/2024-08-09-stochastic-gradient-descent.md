@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Implementating Stochastic Gradient Descent and its variants
+title: Implementing Stochastic Gradient Descent and variants
 date: 2024-08-09 10:33:13
-description: Implementation of stochastic gradient descent and its variants
+description: In this post, we implemented stochastic gradient descent in python which is one of the efficient method for training ML models. The implementation also encompases various SGD variants like constant and shrinking step sizes, momentum, and averaging, comparing how each one impacts the speed and accuracy of the model’s convergence.
 tags: stochatic-gradient gradient-descent momentum
 categories: optimization
 giscus_comments: true
@@ -14,7 +14,7 @@ toc:
 
 Welcome to the implementation of an important optimization techniques in machine learning! In this post, we’ll look at Gradient Descent (GD) and Stochastic Gradient Descent (SGD) which are two essential methods for training machine learning models. Whether you’re new to these concepts or looking to refine your understanding, this post is designed to make these methods comprehensive and practical.
 
-We’ll walk through various SGD variants like constant and shrinking step sizes, momentum, and averaging, comparing how each one impacts the speed and accuracy of your model’s convergence. Along the way, we’ll discuss when to use each technique, what makes them effective, and how to balance computational cost with performance.
+We’ll walk through various SGD variants like constant and shrinking step sizes, momentum, and averaging, comparing how each one impacts the speed and accuracy of the model’s convergence. Along the way, we’ll discuss when to use each technique, what makes them effective, and how to balance computational cost with performance.
 
 Let’s dive in together and discover the best method for training your machine learning model!
 
