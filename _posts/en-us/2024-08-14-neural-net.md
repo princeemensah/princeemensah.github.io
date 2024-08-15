@@ -2,7 +2,7 @@
 layout: post
 title: Implementing Neural Network from scratch (Binary Classification)
 date: 2024-08-14 09:46:13
-description: 
+description: In this blog, we explored the process of building a neural network from scratch using Python and the MNIST dataset. By focusing on binary classification, we covered the essential components of neural networks, including data preprocessing, parameter initialization, forward pass, backpropagation, and training the network.
 tags: backpropagation binary-classification forward-pass
 categories: neural-network
 giscus_comments: true
