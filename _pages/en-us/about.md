@@ -3,7 +3,8 @@ page_id: about
 layout: about
 title: About
 permalink: /
-subtitle: ""
+subtitle: > 
+  <h6 class="m-0 mb-2" style="font-size: 0.83em;"><a href="https://pmensah28.github.io" class="page-description" target="_blank">Previous Portfolio</a></h6>
 
 profile:
   align: left
