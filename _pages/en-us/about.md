@@ -17,6 +17,9 @@ social: true # includes social icons at the bottom of the page
 animated_background: false # includes an animated background
 ---
 
-I'm a Master's student in machine learning at the [African Master's in Machine Intelligence (AMMI)]("https://aimsammi.org/"). I have a master's degree in mathematical sciences from the [African Institute for Mathematical Sciences (AIMS)]("https://nexteinstein.org/#").
+I am a Master's student in machine learning at the [African Master's in Machine Intelligence (AMMI)]("https://aimsammi.org/"), and a previous Master's degree in mathematical sciences from the [African Institute for Mathematical Sciences (AIMS)]("https://nexteinstein.org/#") with research experience in quantum computing.
 
-I am dedicated to building a career that leverages my creativity to develop machine learning algorithms, with the objective of fostering research and innovation.
+I have developed my knowledge in foundational topics in machine learning and optimization, and I'm interested in a research that focuses on developing learning systems capable of understanding and interacting with the world by incorporating structural information and domain knowledge.
+
+Please feel free to contact me via [email](mailto:pmensah@aimsammi.org) or click <a href="https://princeemensah.github.io/assets/pdf/en-us/princemensah_cv.pdf" target="_blank">here</a> to grab a copy of my CV.
+

@@ -9,7 +9,9 @@ categories:
 citation:
   bibtex: "or as a BibTeX entry:"
   introduction: "If you found this useful, please cite this as:"
-contact_note: ""
+contact_note: > 
+  <br/>
+  For research project collaboration, you can email or schedule a meeting with me <a href="https://calendly.com/pmensah-8kd" target="_blank">here</a>.
 cv:
   address: Address
   area: Area
