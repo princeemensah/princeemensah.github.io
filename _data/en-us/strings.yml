@@ -65,7 +65,7 @@ cv:
   work: Work
 footer_text: > # the ">" symbol means to ignore newlines until "titles:"
   Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/pmensah28/al-folio">al-folio</a> theme.
-  Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>. Visit my <a href="https://pmensah28.github.io/" target="_blank">Previous portfolio</a>.
+  Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>. Visit my <a href="https://pmensah28.github.io/" target="_blank">previous portfolio</a>.
 latest_posts: Latest posts
 months:
   long:
