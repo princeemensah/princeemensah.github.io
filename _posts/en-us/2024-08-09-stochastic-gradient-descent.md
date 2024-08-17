@@ -8,6 +8,7 @@ categories: optimization
 giscus_comments: true
 related_posts: false
 featured: true
+thumbnail: assets/img/momentum2.png
 toc:
   sidebar: right
 ---
