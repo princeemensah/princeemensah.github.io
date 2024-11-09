@@ -22,5 +22,5 @@ I am a Master's student in machine learning at the <a href="https://aimsammi.org
 
 I have developed my knowledge in foundational topics in machine learning and optimization, and I'm interested in pursuing a research that focuses on developing learning models capable of understanding and interacting with the environment by incorporating structural information and domain knowledge.
 
-Please feel free to contact me via [email](mailto:pmensah@aimsammi.org) or click <a href="https://princeemensah.github.io/assets/pdf/en-us/princemensah_cv.pdf" target="_blank">here</a> to grab a copy of my CV.
+<!-- Please feel free to contact me via [email](mailto:pmensah@aimsammi.org) or click <a href="https://princeemensah.github.io/assets/pdf/en-us/princemensah_cv.pdf" target="_blank">here</a> to grab a copy of my CV. -->
 
