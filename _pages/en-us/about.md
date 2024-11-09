@@ -3,8 +3,8 @@ page_id: about
 layout: about
 title: About
 permalink: /
-subtitle: > 
-  <h6 class="m-0 mb-2" style="font-size: 0.83em;"><a href="https://pmensah28.github.io" class="page-description" target="_blank">Previous Portfolio</a></h6>
+# subtitle: > 
+#   # <h6 class="m-0 mb-2" style="font-size: 0.83em;"><a href="https://pmensah28.github.io" class="page-description" target="_blank">Previous Portfolio</a></h6>
 
 profile:
   align: left
@@ -12,7 +12,7 @@ profile:
   image_circular: false # crops the image to make it circular
   more_info: ""
 
-news: false # includes a list of news items
+news: True # includes a list of news items
 selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 animated_background: false # includes an animated background
