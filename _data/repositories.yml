@@ -2,6 +2,8 @@ github_users:
   - pmensah28
 
 github_repos:
+  - pmensah28/Sentiment-Analysis
+  - pmensah28/text-summarization-system
   - pmensah28/Question-Answering-System 
   - pmensah28/Web-Scraping-Projects
   - pmensah28/alexnet-on-cifar 
