@@ -6,7 +6,7 @@ description: The web application uses a deep learning model to classify cassava 
 
 img: assets/img/cassava-classifier.png
 redirect: https://app-cld-predict-21-cassavage.streamlit.app/
-importance: 1
+importance: 2
 category: GitHub Projects
 ---
 

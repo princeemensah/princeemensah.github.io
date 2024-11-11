@@ -1,12 +1,12 @@
 ---
 layout: page
-title: Question Answering System
-description: In this project, I built a Question-Answering (QA) system designed to efficiently retrieve relevant passages from a corpus of documents in response to user queries. The system utilizes SentenceTransformers for embedding generation, Elasticsearch for data storage and retrieval, Flask for API development, and Streamlit for the user interface.
+title: End-to-end Test Summerization
+description: In this project, we built a text summarization system built using FastAPI for the backend and Streamlit for the frontend. The backend API performs user authentication and summarization of texts using a transformer model, while the frontend provides a user-friendly interface for inputting text and viewing summaries.
 
 
-img: assets/img/question_answering.png
-redirect: https://github.com/pmensah28/Question-Answering-System
-importance: 2
+img: assets/img/text_summerization.png
+redirect: https://github.com/pmensah28/text-summarization-system
+importance: 1
 category: GitHub Projects
 ---
 

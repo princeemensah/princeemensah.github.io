@@ -6,7 +6,7 @@ description: Image classification with alexnet from scratch.
 
 img: assets/img/alexnet.jpg
 redirect: https://github.com/NajlaaNawaii/AlexNet-on-Cifar-Datasets
-importance: 1
+importance: 3
 category: GitHub Projects
 ---
 

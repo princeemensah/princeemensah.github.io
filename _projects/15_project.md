@@ -1,12 +1,12 @@
 ---
 layout: page
-title: Question Answering System
-description: In this project, I built a Question-Answering (QA) system designed to efficiently retrieve relevant passages from a corpus of documents in response to user queries. The system utilizes SentenceTransformers for embedding generation, Elasticsearch for data storage and retrieval, Flask for API development, and Streamlit for the user interface.
+title: End-to-end Sentiment Analysis Using BERT
+description: This project is designed to analyze sentiment from movie reviews using a BERT-based model. The pipeline includes data ingestion, preprocessing, model training, evaluation, and deployment, orchestrated with Apache Airflow. The project utilizes DVC for data versioning and model tracking, MLflow for experiment tracking, and FastAPI for serving the model through an API.
 
 
-img: assets/img/question_answering.png
-redirect: https://github.com/pmensah28/Question-Answering-System
-importance: 2
+img: assets/img/sentiment_analysis.png
+redirect: https://github.com/pmensah28/Sentiment-Analysis
+importance: 1
 category: GitHub Projects
 ---
 
