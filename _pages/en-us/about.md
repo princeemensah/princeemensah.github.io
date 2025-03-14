@@ -18,9 +18,11 @@ social: true # includes social icons at the bottom of the page
 animated_background: false # includes an animated background
 ---
 
-I am a Master's student in machine learning at the <a href="https://aimsammi.org/" target="_blank">African Master's in Machine Intelligence (AMMI)</a>. Before joining AMMI, I studied MS mathematical sciences at the <a href="https://aims.edu.gh/" target="_blank">African Institute for Mathematical Sciences (AIMS), Ghana</a> with research experience in quantum computing.
+I'm an AI Research Fellow at InstaDeep, working on hyperspectral remote sensing for agricultural applications. I received my MS in machine learning at the <a href="https://aimsammi.org/" target="_blank">African Master's in Machine Intelligence (AMMI)</a> and MS in mathematical sciences at the <a href="https://aims.edu.gh/" target="_blank">African Institute for Mathematical Sciences (AIMS), Ghana</a> with research experience in quantum computing.
 
-I have developed my knowledge in foundational topics in machine learning and optimization, and I'm interested in pursuing a research that focuses on developing learning models capable of understanding and interacting with the environment by incorporating structural information and domain knowledge.
+My research at <a href="https://www.instadeep.com/" target="_blank">InstaDeep</a> focuses on integrating the PROSAIL Radiative Transfer Model (RTM) with Physics Informed Neural Networks (PINNs) to predict critical biophysical and biochemical vegetation traits.
+
+<!-- I have developed my knowledge in foundational topics in machine learning and optimization, and I'm interested in pursuing a research that focuses on developing learning models capable of understanding and interacting with the environment by incorporating structural information and domain knowledge. -->
 
 <!-- Please feel free to contact me via [email](mailto:pmensah@aimsammi.org) or click <a href="https://princeemensah.github.io/assets/pdf/en-us/princemensah_cv.pdf" target="_blank">here</a> to grab a copy of my CV. -->
 
