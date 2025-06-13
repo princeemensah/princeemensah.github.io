@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem "jekyll", "~> 4.3.2"
+gem "sassc", "~> 2.4.0"
 gem "csv"
 
 group :jekyll_plugins do

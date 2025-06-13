@@ -2,7 +2,7 @@ name: Deploy Jekyll site to Pages
 
 on:
   push:
-    branches: ["master"]
+    branches: ["main", "master"]
   workflow_dispatch:
 
 permissions:
@@ -30,9 +30,12 @@ jobs:
       - name: Build with Jekyll
         run: |
           bundle install
-          bundle exec jekyll build --verbose
+          bundle exec jekyll build --verbose --trace
+          ls -la _site/
         env:
           JEKYLL_ENV: production
+          LANG: en_US.UTF-8
+          LC_ALL: en_US.UTF-8
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 

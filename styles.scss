@@ -1,15 +1,16 @@
 ---
 ---
 
-@import "base";
-@import "layout";
-@import "nav";
-@import "footer";
-@import "headings";
-@import "home";
-@import "publications";
-@import "projects";
-@import "talks";
-@import "blog";
-@import "syntax-highlighting";
-@import "cv";
+@use "sass:color";
+@use "base" as *;
+@use "layout" as *;
+@use "nav" as *;
+@use "footer" as *;
+@use "headings" as *;
+@use "home" as *;
+@use "publications" as *;
+@use "projects" as *;
+@use "talks" as *;
+@use "blog" as *;
+@use "syntax-highlighting" as *;
+@use "cv" as *;
