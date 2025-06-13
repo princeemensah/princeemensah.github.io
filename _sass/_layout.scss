@@ -1,0 +1,45 @@
+@use "_vars" as *;
+
+/**
+ * Layout classes
+ */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  max-width: $content-width + 2 * $spacing-unit;
+  margin: 0 auto;
+  padding: 0 $spacing-unit;
+}
+
+.page-main {
+  display: flex;
+  flex-direction: column;
+  flex-flow: initial;
+}
+
+.page-content {
+  padding-bottom: 0.1em;
+  flex: 1;
+}
+
+.social-links {
+  text-align: center;
+  margin-top: 15px;
+}
+
+@include media-query($on-palm) {
+  .container {
+    max-width: $content-width + $spacing-unit;
+    margin: 0 auto;
+    padding: 0 calc($spacing-unit/2);
+  }
+}

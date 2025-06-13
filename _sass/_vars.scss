@@ -1,0 +1,42 @@
+@use "sass:color";
+
+// Our variables
+$base-font-family: 'Volkhov', serif;
+$base-font-size: 16px;
+$small-font-size:  0.9rem;
+$base-line-height: 1.5;
+
+$spacing-unit: 30px;
+$content-width:    800px;
+
+$text-color: #595959;
+$dark-text-color: #dadbdf;
+$background-color: #fff;
+$dark-background-color: #20212b;
+$brand-color: #043361;
+$link-color: #003D79;
+$link-hover-color: #3eb7f0;
+$dark-link-color: #3eb7f0;
+$dark-link-hover-color: #5fc7ff;
+$nav-color: #3eb7f0;
+$dark-nav-color: #3eb7f0;
+$header-color: #043361;
+$dark-header-color: #3eb7f0;
+$footer-background: #2c3e50;
+$footer-text:       color.adjust(#fff, $lightness: -10%);
+
+$grey-color: #828282;
+$grey-color-lightest: #f8f8f8;
+$grey-color-dark: color.adjust($grey-color, $lightness: -25%);
+$grey-color-light: color.adjust($grey-color, $lightness: 40%);
+
+$yellow-color: #ffc000;  // For trophy icons
+
+$on-palm: 600px;
+$on-laptop: 800px;
+
+@mixin media-query($device) {
+  @media screen and (max-width: $device) {
+    @content;
+  }
+}

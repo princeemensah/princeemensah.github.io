@@ -1,0 +1,6 @@
+<figure>
+  <img src="{{ include.path }}" class="{{ include.class }}" {% if include.zoomable %}data-zoomable{% endif %} loading="{{ include.loading | default: 'lazy' }}">
+  {% if include.caption %}
+  <figcaption>{{ include.caption }}</figcaption>
+  {% endif %}
+</figure> 

@@ -1,0 +1,76 @@
+@use "sass:color";
+@use "_vars" as *;
+
+/**
+ * Headings
+ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Volkhov', serif;
+  font-weight: 500;
+  line-height: 1.2;
+  color: $header-color;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  font-size: 2.5em;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 2em;
+  border-bottom: 1px solid $grey-color-light;
+  padding-bottom: 0.3em;
+}
+
+h3 {
+  font-size: 1.5em;
+}
+
+h4 {
+  font-size: 1.25em;
+}
+
+h5 {
+  font-size: 1em;
+}
+
+h6 {
+  font-size: 0.875em;
+}
+
+@media (prefers-color-scheme: dark) {
+  h1, h2, h3, h4, h5, h6 {
+    color: $dark-header-color;
+  }
+}
+
+/**
+ * Anchor
+ */
+.anchor {
+  display: inline-block;
+  margin-left: -1.5em;
+  width: 1.5em;
+  position: relative;
+  bottom: 0.2em;
+  outline: 0;
+  font-size: 0.6em;
+  opacity: 0;
+}
+
+@include media-query($on-laptop) {
+  .anchor {
+    display: none;
+  }
+}
+
+h2, h3, h4, h5, h6 {
+  &:hover {
+    .anchor {
+      opacity: 0.8;
+      transition: opacity .08s ease-in;
+    }
+  }
+}

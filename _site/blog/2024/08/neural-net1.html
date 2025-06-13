@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="application-name" content="Prince Mensah">
+  <meta name="theme-color" content="#b00">
+  <link rel="shortcut icon" href="/favicon.ico"/>
+  <link rel="icon" type="image/png" href="/favicon.png" sizes="250x250" />
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Implementing Neural Network from scratch-Part 1 (Binary Classification) | Prince Mensah</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Implementing Neural Network from scratch-Part 1 (Binary Classification)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this blog, we explored the process of building a neural network from scratch using Python and the MNIST dataset. By focusing on binary classification, we covered the essential components of neural networks, including data preprocessing, parameter initialization, forward pass, backpropagation, and training the network." />
+<meta property="og:description" content="In this blog, we explored the process of building a neural network from scratch using Python and the MNIST dataset. By focusing on binary classification, we covered the essential components of neural networks, including data preprocessing, parameter initialization, forward pass, backpropagation, and training the network." />
+<link rel="canonical" href="http://localhost:4000/blog/2024/08/neural-net1.html" />
+<meta property="og:url" content="http://localhost:4000/blog/2024/08/neural-net1.html" />
+<meta property="og:site_name" content="Prince Mensah" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-08-14T11:46:13+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Implementing Neural Network from scratch-Part 1 (Binary Classification)" />
+<meta name="twitter:site" content="@princeemensah" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2024-08-14T11:46:13+02:00","datePublished":"2024-08-14T11:46:13+02:00","description":"In this blog, we explored the process of building a neural network from scratch using Python and the MNIST dataset. By focusing on binary classification, we covered the essential components of neural networks, including data preprocessing, parameter initialization, forward pass, backpropagation, and training the network.","headline":"Implementing Neural Network from scratch-Part 1 (Binary Classification)","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/2024/08/neural-net1.html"},"url":"http://localhost:4000/blog/2024/08/neural-net1.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <link rel="alternate" type="application/rss+xml" title="Prince Mensah" href="http://localhost:4000/feed.xml">
+
+  <link href="https://use.fontawesome.com/releases/v6.7.2/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1.9.4/css/academicons.min.css"/>
+  <link href="/styles.css" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/.js" crossorigin="anonymous"></script>
+</head>
+  <body>
+    
+<header class="page-header">
+  <nav class="container">
+    <a class="site-title" href="/">Prince Mensah</a>
+
+    <a href="/projects/" >Projects</a>
+    <!-- <a href="/publications/" >Publications</a> -->
+    <!-- <a href="/talks/" >Talks</a> -->
+    <a href="/blog/" aria-current="page">Blog</a>
+    <!-- <a href="/cv/" >CV</a> -->
+
+    <span class="external">
+      <a href="https://github.com/pmensah28"><i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a>
+      <a href="mailto:princemensah@aims.edu.gh"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Email</a>
+    </span>
+  </nav>
+</header>
+
+
+    <main class="page-content">
+      <article class="container post">
+  <header class="post-header">
+    <h1 class="post-title">Implementing Neural Network from scratch-Part 1 (Binary Classification)</h1>
+    <p class="post-subtitle">In this blog, we explored the process of building a neural network from scratch using Python and the MNIST dataset. By focusing on binary classification, we covered the essential components of neural networks, including data preprocessing, parameter initialization, forward pass, backpropagation, and training the network.</p>
+    <p class="post-meta">
+      Published on Aug 14, 2024
+      
+      
+      </p>
+  </header>
+
+  <div class="post-content">
+    <h2 id="introduction">Introduction</h2>
+
+<p>Neural networks have become a powerful tool these days, forming the backbone of modern deep learning and powering almost everything from computer vison, natural language processing etc. In as much as it’s quite simpler to use pre-built libraries like Pytorch or TensorFlow to build and train neural networks, I think it’s quite important for us to know how these models fundamentally works. In this blog post, we will build a very simple neural network from scratch using on Numpy and perfom a binary classification using MNIST dataset.</p>
+
+<p>We’ll focus on classifying between two distinct digits: <code class="language-plaintext highlighter-rouge">1</code> and <code class="language-plaintext highlighter-rouge">2</code>. Before we dive into building the model, let’s start by downloading the MNIST dataset and perfom some preprocessing that will necessary for training the model.</p>
+
+<h2 id="data-loading-and-preprocessing">Data Loading and Preprocessing</h2>
+
+<p>We’ll begin by loading the MNIST dataset using TensorFlow, which provides a convenient method to download and load the data. The MNIST dataset is a collection of 70,000 images of handwritten digits, each 28x28 pixels in size. After loading the data, we’ll filter it to only include the classes <code class="language-plaintext highlighter-rouge">1</code> and <code class="language-plaintext highlighter-rouge">2</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">tensorflow</span> <span class="k">as</span> <span class="n">tf</span> <span class="c1"># Use to download the data 
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span> <span class="c1"># Reproducibility.
+</span></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">dataset</span><span class="p">():</span>
+    <span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span> <span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">datasets</span><span class="p">.</span><span class="n">mnist</span><span class="p">.</span><span class="nf">load_data</span><span class="p">()</span>
+
+    <span class="c1"># Filter training data for classes 1 and 2
+</span>    <span class="n">index_1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">y_train</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">index_2</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">y_train</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">concatenate</span><span class="p">([</span><span class="n">index_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index_2</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">shuffle</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="n">train_x</span> <span class="o">=</span> <span class="n">x_train</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">train_y</span> <span class="o">=</span> <span class="n">y_train</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="n">train_y</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">train_y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">train_y</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">train_y</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+    
+    <span class="c1"># Filter test data for classes 1 and 2
+</span>    <span class="n">index_1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">y_test</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">index_2</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">y_test</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">concatenate</span><span class="p">([</span><span class="n">index_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index_2</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">shuffle</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="n">test_y</span> <span class="o">=</span> <span class="n">y_test</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">test_x</span> <span class="o">=</span> <span class="n">x_test</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="n">test_y</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">test_y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">test_y</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">test_y</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span>
+</code></pre></div></div>
+
+<p>In the above code, we loaded the dataset and then use NumPy to filter the images based on their labels Finally, we relabeled the data so that <code class="language-plaintext highlighter-rouge">1</code> becomes <code class="language-plaintext highlighter-rouge">0</code> and <code class="language-plaintext highlighter-rouge">2</code> becomes <code class="language-plaintext highlighter-rouge">1</code>, making this a binary classification problem.</p>
+
+<h3 id="preprocessing-the-data">Preprocessing the Data</h3>
+
+<p>The next thing we’ll do it to normalize the data, which means that the pixel values of the mnist data which ranges from 0 to 255 will now be scaled to a range between 0 and 1. And yes, since our neural network will be a fully connected (dense) network, we need to flatten each 28x28 image into a 784-dimensional vector.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">data_preprocessing</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">test_x</span><span class="p">):</span>
+    <span class="c1"># Normalize the pixel values to [0, 1]
+</span>    <span class="n">train_x</span> <span class="o">=</span> <span class="n">train_x</span> <span class="o">/</span> <span class="mf">255.</span>
+    <span class="n">test_x</span> <span class="o">=</span> <span class="n">test_x</span> <span class="o">/</span> <span class="mf">255.</span>
+
+    <span class="c1"># Flatten the images from 28x28 to 784
+</span>    <span class="n">train_x</span> <span class="o">=</span> <span class="n">train_x</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="n">train_x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">test_x</span> <span class="o">=</span> <span class="n">test_x</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="n">test_x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">train_x</span><span class="p">,</span> <span class="n">test_x</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">train_x</span><span class="sh">'</span><span class="s">s shape: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">train_x</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">test_x</span><span class="sh">'</span><span class="s">s shape: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">test_x</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span> 
+</code></pre></div></div>
+
+<p>Output</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">train_x</span><span class="sh">'</span><span class="s">s shape: (12700, 784)
+test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">shape</span><span class="p">:</span> <span class="p">(</span><span class="mi">2167</span><span class="p">,</span> <span class="mi">784</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="implementing-the-neural-network">Implementing The Neural Network</h2>
+
+<p>Now, let’s dive into the core of this project starting with initializing the network and moving through the forward pass, backward pass, training, and prediction phases.</p>
+
+<h3 id="initializing-the-neural-network">Initializing the Neural Network</h3>
+
+<p>The first step in building our neural network is to define its structure and initialize some key components. This is done in the <code class="language-plaintext highlighter-rouge">__init__</code> method of the neural network class.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">NeuralNet</span><span class="p">:</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">size_of_layers</span><span class="p">):</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span> <span class="o">=</span> <span class="n">size_of_layers</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">)</span> <span class="c1"># number of layers
+</span>    <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># number of traing examples
+</span>    <span class="n">self</span><span class="p">.</span><span class="n">costs</span> <span class="o">=</span> <span class="p">[]</span>
+</code></pre></div></div>
+
+<p>With this initialization, we’ve set up the basic structure of our neural network. In the next steps, we’ll define how the network initializes its weights, performs forward passes, and updates its parameters during training.</p>
+
+<h3 id="initializing-the-network-parameters">Initializing the Network Parameters</h3>
+
+<p>Once we have defined the structure of our neural the next step is to initialize the parameters, specifically the weights and biases—for each layer.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">initialize_parameters</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+  <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">)):</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">b</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">((</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>We initialize a weight matrix <code class="language-plaintext highlighter-rouge">W</code> using a Gaussian distribution where the dimensions of this matrix are determined by the number of neurons in the current layer and the previous layer. The weights are scaled by the inverse square root of the number of neurons in the previous layer. This technique is sometimes called He or Xavier initialization. The biases <code class="language-plaintext highlighter-rouge">b</code> for each layer are initialized to zeros.</p>
+
+<h3 id="forward-pass-feeding-data-through-the-network">Forward Pass: Feeding Data Through the Network</h3>
+
+<p>After initializing the parameters of our neural network, the next step is to define the forward pass. This is where we pass our preprocessed data through the network to generate predictions. In this step, the input data is transformed layer by layer until we reach the final output.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">forward_pass</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="n">save</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">A</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">T</span>
+    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)].</span><span class="nf">dot</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">b</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">sigmoid</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">A</span>
+        <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">Z</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">Z</span>
+
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)].</span><span class="nf">dot</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">b</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">sigmoid</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+    <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">A</span>
+    <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span>
+    <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">Z</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">Z</span>
+
+    <span class="k">return</span> <span class="n">A</span><span class="p">,</span> <span class="n">save</span>
+</code></pre></div></div>
+
+<p>The forward pass we have just implemented is where the neural network processes the input data, transforms it through each layer, and produces an output prediction. And by storing intermediate results, the network prepares itself for the backward pass, where it will adjust its parameters to minimize the prediction error.</p>
+
+<h3 id="backward-pass-updating-parameters-through-backpropagation">Backward Pass: Updating Parameters through Backpropagation</h3>
+
+<p>After implementing the forward pass and making predictions, the next important step is the backward pass, also known as backpropagation. This is where the neural network calculates the gradients of the loss function with respect to each parameter (weights and biases) and adjusts them to minimize the error in predictions.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">backward_pass</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">save</span><span class="p">):</span>
+    <span class="n">save_gradients</span> <span class="o">=</span> <span class="p">{}</span> 
+    <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A0</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">T</span>
+
+    <span class="n">A</span> <span class="o">=</span> <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span>
+    <span class="n">dA</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="p">.</span><span class="nf">divide</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="nf">divide</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Y</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">A</span><span class="p">)</span>
+
+    <span class="n">dZ</span> <span class="o">=</span> <span class="n">dA</span> <span class="o">*</span> <span class="n">self</span><span class="p">.</span><span class="nf">sigmoid_derivative</span><span class="p">(</span><span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">Z</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)])</span>
+    <span class="n">dW</span> <span class="o">=</span> <span class="n">dZ</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)].</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="n">self</span><span class="p">.</span><span class="n">n</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">dZ</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="o">/</span> <span class="n">self</span><span class="p">.</span><span class="n">n</span>
+    <span class="n">dAPrev</span> <span class="o">=</span> <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)].</span><span class="n">T</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">dZ</span><span class="p">)</span>
+
+    <span class="n">save_gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">dW</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dW</span>
+    <span class="n">save_gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">db</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">db</span>
+
+    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">dZ</span> <span class="o">=</span> <span class="n">dAPrev</span> <span class="o">*</span> <span class="n">self</span><span class="p">.</span><span class="nf">sigmoid_derivative</span><span class="p">(</span><span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">Z</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)])</span>
+        <span class="n">dW</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">*</span> <span class="n">dZ</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)].</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">dZ</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">layer</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">dAPrev</span> <span class="o">=</span> <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)].</span><span class="n">T</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">dZ</span><span class="p">)</span>
+
+        <span class="n">save_gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">dW</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dW</span>
+        <span class="n">save_gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">db</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">db</span>
+
+    <span class="k">return</span> <span class="n">save_gradients</span>
+</code></pre></div></div>
+
+<p>The backpropagation we have implemented above is an important part of the neural network. By calculating how much each parameter (weight and bias) contributes to the overall error, the network can adjust these parameters to minimize the error. This process is repeated over many iterations, gradually improving the network’s ability to make accurate predictions.</p>
+
+<h3 id="training-the-neural-network">Training the Neural Network</h3>
+
+<p>Let’s now start training the neural network. The training process involves iteratively updating the network’s parameters (weights and biases) to minimize the prediction error.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">3000</span><span class="p">):</span>
+    <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">.</span><span class="nf">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">self</span><span class="p">.</span><span class="nf">initialize_parameters</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">loop</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">):</span>
+        <span class="n">A</span><span class="p">,</span> <span class="n">save</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">forward_pass</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">cost</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">squeeze</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">Y</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">T</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Y</span><span class="p">).</span><span class="nf">dot</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">T</span><span class="p">)))</span> <span class="o">/</span> <span class="n">self</span><span class="p">.</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">gradients</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">backward_pass</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">save</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">dW</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">b</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">b</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">db</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="n">loop</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">costs</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The fit method we have implemented above is simply the training process which repeatedly adjusts the network’s parameters based on the outputs from the cost function. By the end of the training process, the network should have learned a set of parameters that minimize the error on the training data, allowing it to make accurate predictions.</p>
+
+<h3 id="making-predictions">Making Predictions</h3>
+
+<p>After training the neural network, the next step is to use it to make predictions on new data. The <code class="language-plaintext highlighter-rouge">predict</code> method handles this task, taking input data and using the trained model to predict the output labels. Additionally, it calculates the accuracy of the predictions compared to the actual labels.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+    <span class="n">A</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">forward_pass</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">A</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> 
+        <span class="k">if</span> <span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+            <span class="n">pred</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pred</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Accuracy: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">((</span><span class="n">pred</span> <span class="o">==</span> <span class="n">Y</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span><span class="p">)))</span>
+
+<span class="k">def</span> <span class="nf">plot_cost</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">plot</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">costs</span><span class="p">)),</span> <span class="n">self</span><span class="p">.</span><span class="n">costs</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">xlabel</span><span class="p">(</span><span class="sh">"</span><span class="s">epochs</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">"</span><span class="s">cost</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">predict</code> method we have implemented above allows us to evaluate how well our trained model performs on new, unseen data. This method is import for testing the generalizability of the neural network and ensuring that it can make accurate predictions outside of the training data. Lastly, we generate a plot of the cost function over the iterations, allowing us to visualize how well the model is learning over time.</p>
+
+<h3 id="putting-it-all-together">Putting It All Together</h3>
+
+<p>With the neural network class fully implemented, we can now put everything together to train the model, make predictions, and evaluate its performance.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">size_of_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">196</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="nc">NeuralNet</span><span class="p">(</span><span class="n">size_of_layers</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">plot_cost</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>The above implementation is the final step, which define the structure of our neural network, train it on the training data, and then test its accuracy on both the training and test datasets.</p>
+
+<h3 id="full-code-implementation">Full Code Implementation</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="n">tensorflow</span> <span class="k">as</span> <span class="n">tf</span> <span class="c1"># Use to download the data 
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span> <span class="c1">#reproducibility.
+</span>
+<span class="k">class</span> <span class="nc">NeuralNet</span><span class="p">:</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">size_of_layers</span><span class="p">):</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span> <span class="o">=</span> <span class="n">size_of_layers</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">)</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">costs</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+  <span class="k">def</span> <span class="nf">sigmoid</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">z</span><span class="p">))</span>
+    
+
+  <span class="k">def</span> <span class="nf">sigmoid_derivative</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">z</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">sigma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sigma</span><span class="p">)</span>
+    
+
+  <span class="k">def</span> <span class="nf">initialize_parameters</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+    <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span> <span class="c1"># reproducibility
+</span>    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">)):</span>
+      <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+      <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">b</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">((</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+
+  <span class="c1"># forward pass
+</span>  <span class="k">def</span> <span class="nf">forward_pass</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="n">save</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">A</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">T</span>
+    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+      <span class="n">Z</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)].</span><span class="nf">dot</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">b</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+      <span class="n">A</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">sigmoid</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+      <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">A</span>
+      <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+      <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">Z</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">Z</span>
+
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)].</span><span class="nf">dot</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">b</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">sigmoid</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+    <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">A</span>
+    <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span>
+    <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">Z</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">Z</span>
+
+    <span class="k">return</span> <span class="n">A</span><span class="p">,</span> <span class="n">save</span>
+
+  <span class="c1"># backward pass
+</span>  <span class="k">def</span> <span class="nf">backward_pass</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">save</span><span class="p">):</span>
+      <span class="n">save_gradients</span> <span class="o">=</span> <span class="p">{}</span> 
+      <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A0</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">T</span>
+
+      <span class="n">A</span> <span class="o">=</span> <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span>
+      <span class="n">dA</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="p">.</span><span class="nf">divide</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="nf">divide</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Y</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">A</span><span class="p">)</span>
+
+      <span class="n">dZ</span> <span class="o">=</span> <span class="n">dA</span> <span class="o">*</span> <span class="n">self</span><span class="p">.</span><span class="nf">sigmoid_derivative</span><span class="p">(</span><span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">Z</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)])</span>
+      <span class="n">dW</span> <span class="o">=</span> <span class="n">dZ</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)].</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="n">self</span><span class="p">.</span><span class="n">n</span>
+      <span class="n">db</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">dZ</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="o">/</span> <span class="n">self</span><span class="p">.</span><span class="n">n</span>
+      <span class="n">dAPrev</span> <span class="o">=</span> <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)].</span><span class="n">T</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">dZ</span><span class="p">)</span>
+
+      <span class="n">save_gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">dW</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dW</span>
+      <span class="n">save_gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">db</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">db</span>
+
+      <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+          <span class="n">dZ</span> <span class="o">=</span> <span class="n">dAPrev</span> <span class="o">*</span> <span class="n">self</span><span class="p">.</span><span class="nf">sigmoid_derivative</span><span class="p">(</span><span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">Z</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)])</span>
+          <span class="n">dW</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">*</span> <span class="n">dZ</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)].</span><span class="n">T</span><span class="p">)</span>
+          <span class="n">db</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">dZ</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+          <span class="k">if</span> <span class="n">layer</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+              <span class="n">dAPrev</span> <span class="o">=</span> <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)].</span><span class="n">T</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">dZ</span><span class="p">)</span>
+
+          <span class="n">save_gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">dW</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dW</span>
+          <span class="n">save_gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">db</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">db</span>
+
+      <span class="k">return</span> <span class="n">save_gradients</span>
+
+  <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">3000</span><span class="p">):</span>
+      <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span> <span class="c1"># reproducibility
+</span>      <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">.</span><span class="nf">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+      <span class="n">self</span><span class="p">.</span><span class="nf">initialize_parameters</span><span class="p">()</span>
+      <span class="k">for</span> <span class="n">loop</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">):</span>
+          <span class="n">A</span><span class="p">,</span> <span class="n">save</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">forward_pass</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+          <span class="n">cost</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">squeeze</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">Y</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">T</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Y</span><span class="p">).</span><span class="nf">dot</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">T</span><span class="p">)))</span> <span class="o">/</span> <span class="n">self</span><span class="p">.</span><span class="n">n</span><span class="p">)</span>
+          <span class="n">gradients</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">backward_pass</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">save</span><span class="p">)</span>
+
+          <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+              <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">gradients</span><span class="p">[</span>
+                  <span class="sh">"</span><span class="s">dW</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span>
+              <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">b</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">b</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">gradients</span><span class="p">[</span>
+                  <span class="sh">"</span><span class="s">db</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span>
+
+          <span class="k">if</span> <span class="n">loop</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+              <span class="nf">print</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
+              <span class="n">self</span><span class="p">.</span><span class="n">costs</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+      <span class="n">A</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">forward_pass</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+      <span class="n">n</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+
+      <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">A</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> 
+          <span class="k">if</span> <span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+              <span class="n">pred</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+          <span class="k">else</span><span class="p">:</span>
+              <span class="n">pred</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+      <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Accuracy: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">((</span><span class="n">pred</span> <span class="o">==</span> <span class="n">Y</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span><span class="p">)))</span>
+
+  <span class="k">def</span> <span class="nf">plot_cost</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+      <span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">()</span>
+      <span class="n">plt</span><span class="p">.</span><span class="nf">plot</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">costs</span><span class="p">)),</span> <span class="n">self</span><span class="p">.</span><span class="n">costs</span><span class="p">)</span>
+      <span class="n">plt</span><span class="p">.</span><span class="nf">xlabel</span><span class="p">(</span><span class="sh">"</span><span class="s">epochs</span><span class="sh">"</span><span class="p">)</span>
+      <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">"</span><span class="s">cost</span><span class="sh">"</span><span class="p">)</span>
+      <span class="n">plt</span><span class="p">.</span><span class="nf">show</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">dataset</span><span class="p">():</span>
+  <span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span> <span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">datasets</span><span class="p">.</span><span class="n">mnist</span><span class="p">.</span><span class="nf">load_data</span><span class="p">()</span>
+
+  <span class="n">index_1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">y_train</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="n">index_2</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">y_train</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+
+  <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">concatenate</span><span class="p">([</span><span class="n">index_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index_2</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+  <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+  <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">shuffle</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+  <span class="n">train_x</span> <span class="o">=</span> <span class="n">x_train</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+  <span class="n">train_y</span> <span class="o">=</span> <span class="n">y_train</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+  <span class="n">train_y</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">train_y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">train_y</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">train_y</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+  
+  <span class="n">index_1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">y_test</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="n">index_2</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">y_test</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+
+  <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">concatenate</span><span class="p">([</span><span class="n">index_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index_2</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+  <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">shuffle</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+  <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">concatenate</span><span class="p">([</span><span class="n">index_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index_2</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+  <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">shuffle</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+  <span class="n">test_y</span> <span class="o">=</span> <span class="n">y_test</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+  <span class="n">test_x</span> <span class="o">=</span> <span class="n">x_test</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+  <span class="n">test_y</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">test_y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">test_y</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">test_y</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+
+  <span class="k">return</span> <span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span>
+
+<span class="k">def</span> <span class="nf">data_preprocessing</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">test_x</span><span class="p">):</span>
+    <span class="c1"># Normalize
+</span>    <span class="n">train_x</span> <span class="o">=</span> <span class="n">train_x</span> <span class="o">/</span> <span class="mf">255.</span>
+    <span class="n">test_x</span> <span class="o">=</span> <span class="n">test_x</span> <span class="o">/</span> <span class="mf">255.</span>
+
+    <span class="c1"># Flatten the images
+</span>    <span class="n">train_x</span> <span class="o">=</span> <span class="n">train_x</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="n">train_x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">test_x</span> <span class="o">=</span> <span class="n">test_x</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="n">test_x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">train_x</span><span class="p">,</span> <span class="n">test_x</span>
+
+<span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span> <span class="o">=</span> <span class="nf">dataset</span><span class="p">()</span>
+<span class="n">train_x</span><span class="p">,</span> <span class="n">test_x</span> <span class="o">=</span> <span class="nf">data_preprocessing</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">test_x</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">train_x</span><span class="sh">'</span><span class="s">s shape: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">train_x</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">test_x</span><span class="sh">'</span><span class="s">s shape: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">test_x</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span> 
+
+<span class="n">size_of_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">196</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="nc">NeuralNet</span><span class="p">(</span><span class="n">size_of_layers</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">plot_cost</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I hope this tutorial provides a detailed approach of the process of building a neural network from scratch. Understanding the core components like forward and backward propagation is crucial since they form the backbone of any neural network. From here, we can explore various optimizations to improve accuracy, speed up computation, and enhance performance. In the next steps, we’ll look at how to implement similar neural networks using popular frameworks like TensorFlow and PyTorch, which offer powerful tools for more advanced applications.</p>
+
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm-8 mt-3 mt-md-0">
+        <picture>
+            <img src="/images/blog/sigmoid.png" width="100%" alt="Sigmoid activation function plot" />
+        </picture>
+    </div>
+</div>
+
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm-8 mt-3 mt-md-0">
+        <picture>
+            <img src="/images/blog/binary_loss.png" width="100%" alt="Binary cross entropy loss plot" />
+        </picture>
+    </div>
+</div>
+
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm-8 mt-3 mt-md-0">
+        <picture>
+            <img src="/images/blog/binary_accuracy.png" width="100%" alt="Training and validation accuracy plot" />
+        </picture>
+    </div>
+</div>
+
+
+  </div>
+
+  <div class="blog-links">
+  
+    <div>
+      <i class="fas fa-md fa-chevron-left"></i>
+      <a href="/blog/2024/08/stochastic-gradient-descent.html" title="Previous Post: Implementing Stochastic Gradient Descent and variants from scratch.">Implementing Stochastic Gradient Descent and variants from scratch.</a>
+    </div>
+  
+  
+    <div>
+      <a href="/blog/2024/08/neural-net2.html" title="Next Post: ">Implementing Neural Network from scratch-Part 2 (Softmax Classification)</a>
+      <i class="fas fa-md fa-chevron-right"></i>
+    </div>
+  
+  </div>
+</article>
+
+    </main>
+
+    <footer>
+  <div class="container">
+    <div class="footer-col">
+       
+      Copyright © 2025 Prince Mensah
+    </div>
+    <div class="footer-col site-desc">Passionate about developing end-to-end AI solutions and solving real-world problems through intelligent automation.
+ Find me on <a href="https://github.com/princeemensah">GitHub</a> and <a href="https://www.linkedin.com/in/prince-mensah/">LinkedIn</a>.</div>
+    <div class="footer-col">
+      Template from <a href="https://www.domoritz.de/"> Dominik Moritz</a>.
+    </div>
+    <div class="footer-col clustrmap-container">
+      <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=dKVHG4QB0QwUwVA8X5yR_KMJNsrm6zXKnNANLCeMb9Y"></script>
+    </div>
+  </div>
+</footer>
+
+    <script>
+  function trim(str) {
+    return str.replace(/^\s+|\s+$/g, '');
+  }
+  var headers = document.querySelectorAll("h2, h3, h4, h5, h6");
+  for (var i=0; i<headers.length; i++) {
+    var h = headers[i];
+    var name = h.getAttribute("id");
+    var title = h.innerHTML;
+    h.innerHTML = '<a href="#' + name + '" class="anchor"><i class="fas fa-hashtag"></i></a>' + trim(title);
+  }
+</script>
+
+  </body>
+</html>
