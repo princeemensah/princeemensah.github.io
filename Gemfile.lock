@@ -146,12 +146,16 @@ PLATFORMS
 
 DEPENDENCIES
   csv
-  jekyll
-  jekyll-feed
-  jekyll-github-metadata
-  jekyll-mentions
-  jekyll-seo-tag
-  jekyll-sitemap
+  http_parser.rb (~> 0.6.0)
+  jekyll (~> 4.3.2)
+  jekyll-feed (~> 0.17.0)
+  jekyll-github-metadata (~> 2.16.1)
+  jekyll-mentions (~> 1.6.0)
+  jekyll-seo-tag (~> 2.8.0)
+  jekyll-sitemap (~> 1.4.0)
+  tzinfo (>= 1, < 3)
+  tzinfo-data
+  wdm (~> 0.1.1)
 
 BUNDLED WITH
    2.5.18
