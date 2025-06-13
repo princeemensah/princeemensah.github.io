@@ -15,8 +15,12 @@ fontawesome_kit_id: "your-kit-id" # Replace with your actual FontAwesome kit ID
 twitter:
   username: princeemensah
 
+# SCSS processing
 sass:
   style: compressed
+  sass_dir: _sass
+  load_paths:
+    - _sass
 
 collections:
   publications:
