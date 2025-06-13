@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-06-13T22:16:55+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Prince Mensah</title><subtitle>Passionate about developing end-to-end AI solutions and solving real-world problems through intelligent automation.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-06-13T22:33:53+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Prince Mensah</title><subtitle>Passionate about developing end-to-end AI solutions and solving real-world problems through intelligent automation.
 </subtitle><entry><title type="html">Implementing Neural Network from scratch-Part 2 (Softmax Classification)</title><link href="http://localhost:4000/blog/2024/08/neural-net2.html" rel="alternate" type="text/html" title="Implementing Neural Network from scratch-Part 2 (Softmax Classification)" /><published>2024-08-16T11:46:13+02:00</published><updated>2024-08-16T11:46:13+02:00</updated><id>http://localhost:4000/blog/2024/08/neural-net2</id><content type="html" xml:base="http://localhost:4000/blog/2024/08/neural-net2.html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>In a <a href="https://princeemensah.github.io/blog/2024/neural-net/">previous post on binary classification</a>, we explored how to build a neural network from scratch using the MNIST dataset, focusing on distinguishing between two digits. If you followed that guide, you should now be familiar with key concepts such as forward and backward propagation, as well as the use of the sigmoid activation function for binary outputs.</p>
@@ -11,7 +11,17 @@
 
 <p>Before we can train our neural network on the MNIST dataset, we need to preprocess the data to ensure it’s in the right format. This involves flattening the images, normalizing the pixel values, and converting the labels into a one-hot encoded format.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">pre_process_data</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">pre_process_data</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">):</span>
     <span class="c1"># Flatten the input images
 </span>    <span class="n">train_x</span> <span class="o">=</span> <span class="n">train_x</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="n">train_x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.</span>  <span class="c1"># Flatten and normalize
 </span>    <span class="n">test_x</span> <span class="o">=</span> <span class="n">test_x</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="n">test_x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.</span>  <span class="c1"># Flatten and normalize
@@ -21,30 +31,42 @@
     <span class="n">test_y</span> <span class="o">=</span> <span class="n">enc</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">test_y</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">test_y</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p><strong>Checking the Data Shape</strong></p>
 
 <p>Next, we print the shapes of the preprocessed training and test datasets to confirm that the preprocessing steps were applied correctly. This helps ensure that the data is in the expected format before we proceed with training the neural network.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">),</span> <span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">)</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">datasets</span><span class="p">.</span><span class="n">mnist</span><span class="p">.</span><span class="nf">load_data</span><span class="p">()</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">),</span> <span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">)</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">datasets</span><span class="p">.</span><span class="n">mnist</span><span class="p">.</span><span class="nf">load_data</span><span class="p">()</span>
 <span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span> <span class="o">=</span> <span class="nf">pre_process_data</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">)</span>
 
 <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">train_x</span><span class="sh">'</span><span class="s">s shape: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">train_x</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">test_x</span><span class="sh">'</span><span class="s">s shape: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">test_x</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h2 id="defining-the-neural-network">Defining the Neural Network</h2>
 
 <p>With our data preprocessed and ready, the next step is to define the architecture of our neural network. We’ll do this by creating a <code class="language-plaintext highlighter-rouge">NeuralNetwork</code> class that will handle everything from parameter initialization to training and prediction.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">NeuralNetwork</span><span class="p">:</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">NeuralNetwork</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">layers_size</span><span class="p">):</span>
         <span class="n">self</span><span class="p">.</span><span class="n">layers_size</span> <span class="o">=</span> <span class="n">layers_size</span>
         <span class="n">self</span><span class="p">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">layers_size</span><span class="p">)</span>
         <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">self</span><span class="p">.</span><span class="n">costs</span> <span class="o">=</span> <span class="p">[]</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>The setup we have implemented above is the foundation upon which the rest of the neural network operations—such as forward propagation, backpropagation, and parameter updates—will be built.</p>
 
@@ -52,7 +74,17 @@
 
 <p>Activation functions are very impotant since they introduce non-linearity into model, helping to learn more complex patterns. for introducing non-linearity into the model, allowing it to learn complex patterns in the data. Here, we will use two different activation functions: <code class="language-plaintext highlighter-rouge">sigmoid</code> for the hidden layers and <code class="language-plaintext highlighter-rouge">softmax</code> for the output layer.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">sigmoid</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">sigmoid</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
     <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">Z</span><span class="p">))</span>
 
 <span class="k">def</span> <span class="nf">sigmoid_derivative</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
@@ -62,7 +94,7 @@
 <span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
     <span class="n">expZ</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="n">Z</span> <span class="o">-</span> <span class="n">np</span><span class="p">.</span><span class="nf">max</span><span class="p">(</span><span class="n">Z</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">expZ</span> <span class="o">/</span> <span class="n">expZ</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>The <strong>softmax function</strong> transforms the output of the network into a form that can be interpreted as probabilities, making it ideal for multi-class classification tasks like the MNIST dataset which has 10 different classes.</p>
 
@@ -78,7 +110,24 @@
 
 <p>With our activation functions defined, we can now implement the forward propagation process, where the input data is passed through the network layer by layer to produce the final output. This step involves calculating the weighted sums of the inputs, applying activation functions, and saving the necessary values for backpropagation.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
     <span class="n">save</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">A</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">T</span>  <span class="c1"># X is already flattened, so no further reshaping needed
 </span>    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
@@ -95,14 +144,41 @@
     <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">Z</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">Z</span>
 
     <span class="k">return</span> <span class="n">A</span><span class="p">,</span> <span class="n">save</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>By passing the input data through each layer, the network transforms the raw input into a meaningful output—probabilities that represent the likelihood of each class.</p>
 
 <h2 id="backward-pass">Backward Pass</h2>
 
 <p>After completing the forward propagation and obtaining the network’s output, the next step is backward pass (backpropagation). This is where we calculate the gradients of the cost function with respect to each parameter (weights and biases) and use these gradients to update the parameters, minimizing the error in predictions.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">save</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">save</span><span class="p">):</span>
     
     <span class="n">gradients</span> <span class="o">=</span> <span class="p">{}</span>
     
@@ -129,7 +205,7 @@
         <span class="n">gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">db</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">db</span>
     
     <span class="k">return</span> <span class="n">gradients</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>The Backpropagation we’ve implemented above is the core mechanism that allows a neural network to learn from data. By calculating how much each parameter (weight and bias) contributes to the overall error, the network can adjust these parameters to minimize the error.</p>
 
@@ -137,7 +213,29 @@
 
 <p>Once we’ve set up the forward and backward propagation methods, the next step is to train the neural network. Training involves repeatedly passing the training data through the network, calculating the error, and then adjusting the network’s parameters to reduce this error.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">2500</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">2500</span><span class="p">):</span>
     <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     
     <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -159,7 +257,7 @@
     
         <span class="k">if</span> <span class="n">loop</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">self</span><span class="p">.</span><span class="n">costs</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>By repeating this process over many iterations, the network gradually learns to minimize the error, improving its ability to make accurate predictions.</p>
 
@@ -167,7 +265,20 @@
 
 <p>After training the neural network, the next step is to evaluate its performance on both the training and test datasets Let’s implement two methods; the <code class="language-plaintext highlighter-rouge">predict</code> method which is used to make predictions and calculate the accuracy of the model, and the <code class="language-plaintext highlighter-rouge">plot_cost</code> method which allows us to visualize the cost function over the course of the training process.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
     <span class="n">A</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">forward</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
     <span class="n">y_hat</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">argmax</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">argmax</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -180,13 +291,161 @@
     <span class="n">plt</span><span class="p">.</span><span class="nf">xlabel</span><span class="p">(</span><span class="sh">"</span><span class="s">epochs</span><span class="sh">"</span><span class="p">)</span>
     <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">"</span><span class="s">cost</span><span class="sh">"</span><span class="p">)</span>
     <span class="n">plt</span><span class="p">.</span><span class="nf">show</span><span class="p">()</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>By calculating the accuracy of the model on the training and test datasets, we can assess how well the network has learned and how effectively it can generalize to new data.</p>
 
 <h2 id="full-code-implementation">Full Code Implementation</h2>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="n">tensorflow</span> <span class="k">as</span> <span class="n">tf</span> <span class="c1"># Use to download the data 
 </span><span class="kn">import</span> <span class="n">matplotlib.pylab</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="n">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">OneHotEncoder</span>
@@ -334,7 +593,7 @@
     <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Train Accuracy:</span><span class="sh">"</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">))</span>
     <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Test Accuracy:</span><span class="sh">"</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">))</span>
     <span class="n">model</span><span class="p">.</span><span class="nf">plot_cost</span><span class="p">()</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h2 id="conclusion">Conclusion</h2>
 
@@ -366,12 +625,45 @@
 
 <p>We’ll begin by loading the MNIST dataset using TensorFlow, which provides a convenient method to download and load the data. The MNIST dataset is a collection of 70,000 images of handwritten digits, each 28x28 pixels in size. After loading the data, we’ll filter it to only include the classes <code class="language-plaintext highlighter-rouge">1</code> and <code class="language-plaintext highlighter-rouge">2</code>.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="n">tensorflow</span> <span class="k">as</span> <span class="n">tf</span> <span class="c1"># Use to download the data 
 </span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span> <span class="c1"># Reproducibility.
-</span></code></pre></div></div>
+</span></pre></td></tr></tbody></table></code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">dataset</span><span class="p">():</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">dataset</span><span class="p">():</span>
     <span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span> <span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">datasets</span><span class="p">.</span><span class="n">mnist</span><span class="p">.</span><span class="nf">load_data</span><span class="p">()</span>
 
     <span class="c1"># Filter training data for classes 1 and 2
@@ -401,7 +693,7 @@
     <span class="n">test_y</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="n">test_y</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">return</span> <span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>In the above code, we loaded the dataset and then use NumPy to filter the images based on their labels Finally, we relabeled the data so that <code class="language-plaintext highlighter-rouge">1</code> becomes <code class="language-plaintext highlighter-rouge">0</code> and <code class="language-plaintext highlighter-rouge">2</code> becomes <code class="language-plaintext highlighter-rouge">1</code>, making this a binary classification problem.</p>
 
@@ -409,7 +701,17 @@
 
 <p>The next thing we’ll do it to normalize the data, which means that the pixel values of the mnist data which ranges from 0 to 255 will now be scaled to a range between 0 and 1. And yes, since our neural network will be a fully connected (dense) network, we need to flatten each 28x28 image into a 784-dimensional vector.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">data_preprocessing</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">test_x</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">data_preprocessing</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">test_x</span><span class="p">):</span>
     <span class="c1"># Normalize the pixel values to [0, 1]
 </span>    <span class="n">train_x</span> <span class="o">=</span> <span class="n">train_x</span> <span class="o">/</span> <span class="mf">255.</span>
     <span class="n">test_x</span> <span class="o">=</span> <span class="n">test_x</span> <span class="o">/</span> <span class="mf">255.</span>
@@ -419,17 +721,21 @@
     <span class="n">test_x</span> <span class="o">=</span> <span class="n">test_x</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="n">test_x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">train_x</span><span class="p">,</span> <span class="n">test_x</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">train_x</span><span class="sh">'</span><span class="s">s shape: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">train_x</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">train_x</span><span class="sh">'</span><span class="s">s shape: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">train_x</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">test_x</span><span class="sh">'</span><span class="s">s shape: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">test_x</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span> 
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>Output</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">train_x</span><span class="sh">'</span><span class="s">s shape: (12700, 784)
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">train_x</span><span class="sh">'</span><span class="s">s shape: (12700, 784)
 test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">shape</span><span class="p">:</span> <span class="p">(</span><span class="mi">2167</span><span class="p">,</span> <span class="mi">784</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h2 id="implementing-the-neural-network">Implementing The Neural Network</h2>
 
@@ -439,14 +745,21 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
 
 <p>The first step in building our neural network is to define its structure and initialize some key components. This is done in the <code class="language-plaintext highlighter-rouge">__init__</code> method of the neural network class.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">NeuralNet</span><span class="p">:</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">NeuralNet</span><span class="p">:</span>
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">size_of_layers</span><span class="p">):</span>
     <span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span> <span class="o">=</span> <span class="n">size_of_layers</span>
     <span class="n">self</span><span class="p">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">self</span><span class="p">.</span><span class="n">length</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">)</span> <span class="c1"># number of layers
 </span>    <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># number of traing examples
 </span>    <span class="n">self</span><span class="p">.</span><span class="n">costs</span> <span class="o">=</span> <span class="p">[]</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>With this initialization, we’ve set up the basic structure of our neural network. In the next steps, we’ll define how the network initializes its weights, performs forward passes, and updates its parameters during training.</p>
 
@@ -454,12 +767,17 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
 
 <p>Once we have defined the structure of our neural the next step is to initialize the parameters, specifically the weights and biases—for each layer.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">initialize_parameters</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">initialize_parameters</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
   <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
   <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">)):</span>
     <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">W</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
     <span class="n">self</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sh">"</span><span class="s">b</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">((</span><span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>We initialize a weight matrix <code class="language-plaintext highlighter-rouge">W</code> using a Gaussian distribution where the dimensions of this matrix are determined by the number of neurons in the current layer and the previous layer. The weights are scaled by the inverse square root of the number of neurons in the previous layer. This technique is sometimes called He or Xavier initialization. The biases <code class="language-plaintext highlighter-rouge">b</code> for each layer are initialized to zeros.</p>
 
@@ -467,7 +785,25 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
 
 <p>After initializing the parameters of our neural network, the next step is to define the forward pass. This is where we pass our preprocessed data through the network to generate predictions. In this step, the input data is transformed layer by layer until we reach the final output.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">forward_pass</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">forward_pass</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
     <span class="n">save</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="n">A</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">T</span>
@@ -485,7 +821,7 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
     <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">Z</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="n">Z</span>
 
     <span class="k">return</span> <span class="n">A</span><span class="p">,</span> <span class="n">save</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>The forward pass we have just implemented is where the neural network processes the input data, transforms it through each layer, and produces an output prediction. And by storing intermediate results, the network prepares itself for the backward pass, where it will adjust its parameters to minimize the prediction error.</p>
 
@@ -493,7 +829,33 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
 
 <p>After implementing the forward pass and making predictions, the next important step is the backward pass, also known as backpropagation. This is where the neural network calculates the gradients of the loss function with respect to each parameter (weights and biases) and adjusts them to minimize the error in predictions.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">backward_pass</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">save</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">backward_pass</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">save</span><span class="p">):</span>
     <span class="n">save_gradients</span> <span class="o">=</span> <span class="p">{}</span> 
     <span class="n">save</span><span class="p">[</span><span class="sh">"</span><span class="s">A0</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">T</span>
 
@@ -519,7 +881,7 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
         <span class="n">save_gradients</span><span class="p">[</span><span class="sh">"</span><span class="s">db</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">layer</span><span class="p">)]</span> <span class="o">=</span> <span class="n">db</span>
 
     <span class="k">return</span> <span class="n">save_gradients</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>The backpropagation we have implemented above is an important part of the neural network. By calculating how much each parameter (weight and bias) contributes to the overall error, the network can adjust these parameters to minimize the error. This process is repeated over many iterations, gradually improving the network’s ability to make accurate predictions.</p>
 
@@ -527,7 +889,25 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
 
 <p>Let’s now start training the neural network. The training process involves iteratively updating the network’s parameters (weights and biases) to minimize the prediction error.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">3000</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">3000</span><span class="p">):</span>
     <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
     <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">self</span><span class="p">.</span><span class="n">size_of_layers</span><span class="p">.</span><span class="nf">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -545,7 +925,7 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
         <span class="k">if</span> <span class="n">loop</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="nf">print</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
             <span class="n">self</span><span class="p">.</span><span class="n">costs</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>The fit method we have implemented above is simply the training process which repeatedly adjusts the network’s parameters based on the outputs from the cost function. By the end of the training process, the network should have learned a set of parameters that minimize the error on the training data, allowing it to make accurate predictions.</p>
 
@@ -553,7 +933,26 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
 
 <p>After training the neural network, the next step is to use it to make predictions on new data. The <code class="language-plaintext highlighter-rouge">predict</code> method handles this task, taking input data and using the trained model to predict the output labels. Additionally, it calculates the accuracy of the predictions compared to the actual labels.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
     <span class="n">A</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">forward_pass</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
@@ -572,27 +971,209 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
     <span class="n">plt</span><span class="p">.</span><span class="nf">xlabel</span><span class="p">(</span><span class="sh">"</span><span class="s">epochs</span><span class="sh">"</span><span class="p">)</span>
     <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">"</span><span class="s">cost</span><span class="sh">"</span><span class="p">)</span>
     <span class="n">plt</span><span class="p">.</span><span class="nf">show</span><span class="p">()</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>The <code class="language-plaintext highlighter-rouge">predict</code> method we have implemented above allows us to evaluate how well our trained model performs on new, unseen data. This method is import for testing the generalizability of the neural network and ensuring that it can make accurate predictions outside of the training data. Lastly, we generate a plot of the cost function over the iterations, allowing us to visualize how well the model is learning over time.</p>
 
 <h3 id="putting-it-all-together">Putting It All Together</h3>
 
 <p>With the neural network class fully implemented, we can now put everything together to train the model, make predictions, and evaluate its performance.</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">size_of_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">196</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="n">size_of_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">196</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="nc">NeuralNet</span><span class="p">(</span><span class="n">size_of_layers</span><span class="p">)</span>
 <span class="n">model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">)</span>
 <span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">)</span>
 <span class="n">model</span><span class="p">.</span><span class="nf">plot_cost</span><span class="p">()</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>The above implementation is the final step, which define the structure of our neural network, train it on the training data, and then test its accuracy on both the training and test datasets.</p>
 
 <h3 id="full-code-implementation">Full Code Implementation</h3>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">import</span> <span class="n">tensorflow</span> <span class="k">as</span> <span class="n">tf</span> <span class="c1"># Use to download the data 
 </span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span> <span class="c1">#reproducibility.
@@ -767,7 +1348,7 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
 <span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">)</span>
 <span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">)</span>
 <span class="n">model</span><span class="p">.</span><span class="nf">plot_cost</span><span class="p">()</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h2 id="conclusion">Conclusion</h2>
 
@@ -801,14 +1382,21 @@ test_x</span><span class="sh">'</span><span class="n">s</span> <span class="n">s
 
 <p>Let’s dive in together and discover the best method for training your machine learning model!</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># The following libraries will be essential for our implemetation.
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="c1"># The following libraries will be essential for our implemetation.
 </span><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">from</span> <span class="n">numpy</span> <span class="kn">import</span> <span class="n">linalg</span> <span class="k">as</span> <span class="n">la</span>
 <span class="kn">from</span> <span class="n">scipy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
 <span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="n">numba</span> <span class="kn">import</span> <span class="n">njit</span><span class="p">,</span> <span class="n">jit</span>  <span class="c1"># A just in time compiler to speed things up!
 </span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h2 id="linear-regression-with-ridge-penalization">Linear Regression with Ridge Penalization</h2>
 
@@ -868,7 +1456,39 @@ L_{\text{max}} = \max\left(\sum X_i^2\right) + \lambda
 
 <p>Lets now put all the pieces we’ve discussed above into a <code class="language-plaintext highlighter-rouge">LinReg</code> class which will be important for our optimization tasks.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">scipy.linalg</span> <span class="kn">import</span> <span class="n">svd</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="n">scipy.linalg</span> <span class="kn">import</span> <span class="n">svd</span>
 
 <span class="k">class</span> <span class="nc">LinearRegression</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lbda</span><span class="p">):</span>
@@ -900,7 +1520,7 @@ L_{\text{max}} = \max\left(\sum X_i^2\right) + \lambda
     <span class="k">def</span> <span class="nf">mu_constant</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
         <span class="n">mu</span> <span class="o">=</span>  <span class="nf">min</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">la</span><span class="p">.</span><span class="nf">eigvals</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">X</span><span class="p">.</span><span class="n">T</span><span class="p">,</span><span class="n">self</span><span class="p">.</span><span class="n">X</span><span class="p">))))</span> <span class="o">/</span> <span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="n">lbda</span>
         <span class="k">return</span> <span class="n">mu</span>     
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>Whether you’re using full-batch gradient descent or stochastic methods, this class forms the backbone of our optimization experiments, enabling us to test and compare different techniques effectively.</p>
 
@@ -960,7 +1580,44 @@ L_{\text{max}} = \frac{\max(\sum X_i^2)}{4} + \lambda
 
 <p>This constant reflects the curvature of our loss function, helping us fine-tune our optimization algorithms for faster convergence.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">LogisticRegression</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">LogisticRegression</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lbda</span><span class="p">):</span>
         <span class="n">self</span><span class="p">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
         <span class="n">self</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
@@ -997,7 +1654,7 @@ L_{\text{max}} = \frac{\max(\sum X_i^2)}{4} + \lambda
     <span class="k">def</span> <span class="nf">mu_constant</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
         <span class="n">mu</span> <span class="o">=</span>  <span class="n">self</span><span class="p">.</span><span class="n">lbda</span>
         <span class="k">return</span> <span class="n">mu</span>    
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>Whether you’re using full-batch gradient descent, stochastic gradient descent, momentum or averaging, this class gives us the tools we need to achieve stable and efficient convergence.</p>
 
 <h2 id="data-functions">Data Functions</h2>
@@ -1006,7 +1663,35 @@ L_{\text{max}} = \frac{\max(\sum X_i^2)}{4} + \lambda
 
 <h3 id="data-simulation-for-linear-regression">Data simulation for linear regression</h3>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">numpy.random</span> <span class="kn">import</span> <span class="n">multivariate_normal</span><span class="p">,</span> <span class="n">randn</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="n">numpy.random</span> <span class="kn">import</span> <span class="n">multivariate_normal</span><span class="p">,</span> <span class="n">randn</span>
 <span class="kn">from</span> <span class="n">scipy.linalg.special_matrices</span> <span class="kn">import</span> <span class="n">toeplitz</span>
 
     
@@ -1034,11 +1719,31 @@ L_{\text{max}} = \frac{\max(\sum X_i^2)}{4} + \lambda
     <span class="n">noise</span> <span class="o">=</span> <span class="n">std</span> <span class="o">*</span> <span class="nf">randn</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
     <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h3 id="data-simulation-for-linear-regression-1">Data simulation for linear regression</h3>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">simulate_logreg</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">corr</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">simulate_logreg</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">corr</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
     <span class="sh">"""</span><span class="s">
     Simulation of the logistic regression problem
     
@@ -1058,7 +1763,7 @@ L_{\text{max}} = \frac{\max(\sum X_i^2)}{4} + \lambda
     </span><span class="sh">"""</span>    
     <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nf">simulate_linreg</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">corr</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="nf">sign</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>Both functions are essential because they allow us to create controlled datasets, making it easier to evaluate how well our models perform under different conditions.</p>
 
@@ -1067,23 +1772,31 @@ L_{\text{max}} = \frac{\max(\sum X_i^2)}{4} + \lambda
 <p>In this step, we create the dataset that will be used to test our linear and logistic regression model.</p>
 
 <p><strong>Define Dimensions</strong></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">d</span> <span class="o">=</span> <span class="mi">50</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">d</span> <span class="o">=</span> <span class="mi">50</span>
 <span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>We set the number of features \(d = 50\) and the number of data points \(n = 1000.\) This means our dataset will have 50 features per data point, and we’ll generate \(1000\) such data points.</p>
 
 <p><strong>Setting Up Ground Truth Coefficients</strong></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 <span class="n">w_model_truth</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="n">idx</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">idx</span> <span class="o">/</span> <span class="mf">10.</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="p">.</span><span class="nf">stem</span><span class="p">(</span><span class="n">w_model_truth</span><span class="p">);</span> 
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>We create the true coefficients \(w_{\text{model_truth}}\) that the model will try to learn. These coefficients are generated using an exponential decay function, alternating signs with each feature.</p>
 
 <p><strong>Generate the Dataset</strong></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#X, y = simulate_linreg(w_model_truth, n, std=1., corr=0.1)
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#X, y = simulate_linreg(w_model_truth, n, std=1., corr=0.1)
 </span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nf">simulate_logreg</span><span class="p">(</span><span class="n">w_model_truth</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">corr</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>Using the <code class="language-plaintext highlighter-rouge">simulate_linreg</code> function, we generate the feature matrix \(X\) and the target labels \(y\). The dataset is created with a moderate noise level (<code class="language-plaintext highlighter-rouge">std=1.0</code>) and a correlation of (<code class="language-plaintext highlighter-rouge">corr=0.1</code>) between features.</p>
 
 <p>This dataset simulates a realistic logistic regression problem, providing the data we need to test and refine our optimization algorithms. <strong><em>Please not that we will not be using the the logistic regression model for this task and that explains why I commented it out.</em></strong></p>
@@ -1093,14 +1806,17 @@ L_{\text{max}} = \frac{\max(\sum X_i^2)}{4} + \lambda
 <p>In this step, we choose the model that will be used for our optimization experiments. Here’s what the code does:</p>
 
 <p><strong>Set the Regularization Parameter</strong></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lbda</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">n</span> <span class="o">**</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">lbda</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">n</span> <span class="o">**</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>We define the regularization parameter \(\lambda\) as \(1 / \sqrt{n}\), where \(n\) is the number of data points. This setting helps balance the model complexity and prevents overfitting.</p>
 
 <p><strong>Choose the Model</strong></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#model = LinearRegression(X, y, lbda)
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="c1">#model = LinearRegression(X, y, lbda)
 </span><span class="n">model</span> <span class="o">=</span> <span class="nc">LogisticRegression</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lbda</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>Again I chose the logistic regression model with L2 regularization as the preferred model for this task. However, you can choose to use the linear regression model with Ridge penalization as your preferred model.</p>
 
 <p>This choice determines whether you’ll be performing regression (with <code class="language-plaintext highlighter-rouge">LinearRegression</code>) or classification (with <code class="language-plaintext highlighter-rouge">LogisticRegression</code>). Depending on the dataset you’ve generated (<code class="language-plaintext highlighter-rouge">X</code>, <code class="language-plaintext highlighter-rouge">y</code>), you’ll select the appropriate model for the task.</p>
@@ -1120,7 +1836,16 @@ L_{\text{max}} = \frac{\max(\sum X_i^2)}{4} + \lambda
 \text{grad_error} = \text{numerical_grad} - \text{analytical_grad}
 \end{equation}</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">grad_error</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="n">grad_error</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
     <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">w</span> <span class="o">=</span>  <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
@@ -1129,44 +1854,60 @@ L_{\text{max}} = \frac{\max(\sum X_i^2)}{4} + \lambda
     <span class="n">model</span><span class="p">.</span><span class="nf">f_i</span><span class="p">(</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">w</span><span class="p">)</span>
     <span class="n">grad_error</span><span class="p">.</span><span class="nf">append</span><span class="p">((</span><span class="n">model</span><span class="p">.</span><span class="nf">f_i</span><span class="p">(</span> <span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">w</span><span class="o">+</span><span class="n">eps</span><span class="o">*</span><span class="n">vec</span><span class="p">)</span> <span class="o">-</span> <span class="n">model</span><span class="p">.</span><span class="nf">f_i</span><span class="p">(</span> <span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">w</span><span class="p">))</span><span class="o">/</span><span class="n">eps</span> <span class="o">-</span> <span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="nf">grad_i</span><span class="p">(</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">w</span><span class="p">),</span><span class="n">vec</span><span class="p">))</span>
 <span class="nf">print</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">mean</span><span class="p">(</span><span class="n">grad_error</span><span class="p">))</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>Output:</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">2.7469189607901637e-06</span>
-</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="mf">2.7469189607901637e-06</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>The small value of <code class="language-plaintext highlighter-rouge">2.7469189607901637e-06</code> indicates that the gradients computed by the model are highly accurate and closely match the numerical gradients. This low error confirms that our gradient implementation is correct, ensuring that our optimization algorithms will perform correctly, as they rely on accurate gradient calculations to update the model weights</p>
 
 <p>Alternatively, we can also use the <code class="language-plaintext highlighter-rouge">check_grad</code> function from the <code class="language-plaintext highlighter-rouge">scipy.optimize</code> module to verify the accuracy of the gradient calculations in our <code class="language-plaintext highlighter-rouge">LinearRegression</code> and <code class="language-plaintext highlighter-rouge">LogisticRegression</code> models.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">scipy.optimize</span> <span class="kn">import</span> <span class="n">check_grad</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="n">scipy.optimize</span> <span class="kn">import</span> <span class="n">check_grad</span>
 <span class="n">modellin</span> <span class="o">=</span> <span class="nc">LinearRegression</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lbda</span><span class="p">)</span>
 <span class="nf">check_grad</span><span class="p">(</span><span class="n">modellin</span><span class="p">.</span><span class="n">f</span><span class="p">,</span> <span class="n">modellin</span><span class="p">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>Output:</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">1.2288105629057588e-06</span>
-</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="mf">1.2288105629057588e-06</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">modellog</span> <span class="o">=</span> <span class="nc">LogReg</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lbda</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">modellog</span> <span class="o">=</span> <span class="nc">LogReg</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lbda</span><span class="p">)</span>
 <span class="nf">check_grad</span><span class="p">(</span><span class="n">modellog</span><span class="p">.</span><span class="n">f</span><span class="p">,</span> <span class="n">modellog</span><span class="p">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>Output</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">1.8667365426265916e-07</span>
-</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="mf">1.8667365426265916e-07</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>What we want to do now is to use the L-BFGS (Limited-memory Broyden–Fletcher–Goldfarb–Shanno) algorithm to find a highly accurate solution which will serve as a benchmark for evaluating the performance of the SGD method we’re going to implement.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">scipy.optimize</span> <span class="kn">import</span> <span class="n">fmin_l_bfgs_b</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="n">scipy.optimize</span> <span class="kn">import</span> <span class="n">fmin_l_bfgs_b</span>
 <span class="n">w_init</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 <span class="n">w_min</span><span class="p">,</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nf">fmin_l_bfgs_b</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">f</span><span class="p">,</span> <span class="n">w_init</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">pgtol</span><span class="o">=</span><span class="mf">1e-30</span><span class="p">,</span> <span class="n">factr</span> <span class="o">=</span><span class="mf">1e-30</span><span class="p">)</span>
 
 <span class="nf">print</span><span class="p">(</span><span class="n">obj_min</span><span class="p">)</span>
 <span class="nf">print</span><span class="p">(</span><span class="nf">norm</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="nf">grad</span><span class="p">(</span><span class="n">w_min</span><span class="p">)))</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>Output:</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">0.2736626885606007</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="mf">0.2736626885606007</span>
 <span class="mf">7.144141131678549e-09</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>From the output <code class="language-plaintext highlighter-rouge">obj_min = 0.2736626885606007</code> is the value of the objective function at the found minimum and <code class="language-plaintext highlighter-rouge">norm(model.grad(w_min)) = 7.144141131678549e-09</code> indicates that the algorithm has converged to a point where the gradient is nearly zero, meaning the solution is highly accurate.</p>
 
@@ -1198,7 +1939,59 @@ where \(t_0\) is the iteration at which we begin averaging. Averaging can be par
 
 <p>Now, lets implement the above SGD with option for momentum, averaging and step sizes.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">sgd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">w_min</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">averaging_on</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">momentum</span> <span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">start_late_averaging</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">sgd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">w_min</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">averaging_on</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">momentum</span> <span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">start_late_averaging</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="n">w</span> <span class="o">=</span> <span class="n">w0</span><span class="p">.</span><span class="nf">copy</span><span class="p">()</span>
     <span class="n">w_new</span> <span class="o">=</span> <span class="n">w0</span><span class="p">.</span><span class="nf">copy</span><span class="p">()</span>
     <span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span>
@@ -1250,7 +2043,7 @@ where \(t_0\) is the iteration at which we begin averaging. Averaging can be par
     <span class="k">else</span><span class="p">:</span>
         <span class="n">w_output</span> <span class="o">=</span> <span class="n">w</span><span class="p">.</span><span class="nf">copy</span><span class="p">()</span>    
     <span class="k">return</span> <span class="n">w_output</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">(</span><span class="n">objectives</span><span class="p">),</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <p>This function provides a flexible framework for testing with different variants of SGD, allowing us to test the effects of momentum, averaging, and various step size schedules.</p>
 
 <h2 id="constant-and-shrinking-step-sizes-with-replacement">Constant and Shrinking Step Sizes (With Replacement)</h2>
@@ -1258,9 +2051,11 @@ where \(t_0\) is the iteration at which we begin averaging. Averaging can be par
 
 <p>First, lets set up the number of iterations:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">datapasses</span> <span class="o">=</span> <span class="mi">30</span> 
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">datapasses</span> <span class="o">=</span> <span class="mi">30</span> 
 <span class="n">n_iter</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">datapasses</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p><code class="language-plaintext highlighter-rouge">datapasses</code> refers to the number of complete passes over the dataset. The total number of iterations, <code class="language-plaintext highlighter-rouge">n_iter</code>, is calculated by multiplying the number of data points \(n\) by the number of passes. This ensures that each data point is updated multiple times during the training process.</p>
 
@@ -1268,29 +2063,57 @@ where \(t_0\) is the iteration at which we begin averaging. Averaging can be par
 
 <p>In our first approach, we’ll use a constant step size throughout the optimization:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Lmax</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="nc">L_max_constant</span><span class="p">()</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="n">Lmax</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="nc">L_max_constant</span><span class="p">()</span>
 
 <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">n_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">Lmax</span><span class="p">)</span>
 <span class="n">w0</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 <span class="n">w_sgdcr</span><span class="p">,</span> <span class="n">obj_sgdcr</span><span class="p">,</span> <span class="n">err_sgdcr</span> <span class="o">=</span> <span class="nf">sgd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">w_min</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p><strong>Shrinking Stepsizes Step Size (With Replacement)</strong></p>
 
 <p>Next, we’ll implement SGD using a shrinking step size:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Lmax</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="nc">L_max_constant</span><span class="p">()</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="n">Lmax</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="nc">L_max_constant</span><span class="p">()</span>
 
 <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">steps</span> <span class="o">=</span>  <span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">Lmax</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_iter</span> <span class="o">+</span> <span class="mi">2</span><span class="p">))))</span>
 <span class="n">w_sgdsr</span><span class="p">,</span> <span class="n">obj_sgdsr</span><span class="p">,</span> <span class="n">err_sgdsr</span> <span class="o">=</span> <span class="nf">sgd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">w_min</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 <h3 id="comparing-sgd-with-constant-and-shrinking-step-sizes">Comparing SGD with Constant and Shrinking Step Sizes</h3>
 
 <p>Let’s now compare the difference between SGD with constant step size and shrinking step size and observe their rate of convergence.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Error of objective on a logarithmic scale
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td><td class="rouge-code"><pre><span class="c1"># Error of objective on a logarithmic scale
 </span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">semilogy</span><span class="p">(</span><span class="n">obj_sgdcr</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">SGD const</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">semilogy</span><span class="p">(</span><span class="n">obj_sgdsr</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">SGD shrink</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -1307,7 +2130,7 @@ where \(t_0\) is the iteration at which we begin averaging. Averaging can be par
 <span class="n">plt</span><span class="p">.</span><span class="nf">xlabel</span><span class="p">(</span><span class="sh">"</span><span class="s">#iterations</span><span class="sh">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">"</span><span class="s">Distance to the minimum</span><span class="sh">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">legend</span><span class="p">()</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <div class="row mt-3 justify-content-center">
     <div class="col-sm-8 mt-3 mt-md-0">
@@ -1359,7 +2182,21 @@ t^* = 4 \times \lceil \kappa \rceil,
 where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. This point is chosen to balance between fast initial convergence and the need for more precision as we get closer to the solution.</p>
 
 <p>Let’s now implement the above.</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mu</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="nf">mu_constant</span><span class="p">()</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre><span class="n">mu</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="nf">mu_constant</span><span class="p">()</span>
 <span class="n">Kappa</span> <span class="o">=</span> <span class="n">Lmax</span><span class="o">/</span><span class="n">mu</span>
 <span class="n">tstar</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="nf">int</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">ceil</span><span class="p">(</span><span class="n">Kappa</span><span class="p">))</span>
 
@@ -1373,7 +2210,7 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">np</span><span class="p">.</span><span class="nf">size</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
 <span class="n">w_sgdss</span><span class="p">,</span> <span class="n">obj_sgdss</span><span class="p">,</span> <span class="n">err_sgdss</span> <span class="o">=</span> <span class="nf">sgd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">steps_switch</span><span class="p">,</span> <span class="n">w_min</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>This switching approach effectively combines the advantages of both constant and shrinking step sizes as the constant step size in the early iterations allows for quick progress toward reducing the objective function and as we approach the minimum, the gradients become smaller, and the shrinking step sizes help to ensure that the updates do not overshoot the minimum.</p>
 
@@ -1381,7 +2218,27 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 
 <p>Let’s now compare the difference between SGD with constant step size and shrinking step size and observe their rate of convergence.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Plotting to compare with constant stepsize
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre></td><td class="rouge-code"><pre><span class="c1"># Plotting to compare with constant stepsize
 </span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">semilogy</span><span class="p">(</span><span class="n">obj_sgdcr</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">SGD const</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">semilogy</span><span class="p">(</span><span class="n">obj_sgdss</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">SGD switch</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -1401,7 +2258,7 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">"</span><span class="s">Distance to the minimum</span><span class="sh">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">tstar</span><span class="p">,</span>  <span class="n">color</span> <span class="o">=</span> <span class="sh">"</span><span class="s">orange</span><span class="sh">"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="sh">'</span><span class="s">dashed</span><span class="sh">'</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <div class="row mt-3 justify-content-center">
     <div class="col-sm-8 mt-3 mt-md-0">
@@ -1429,19 +2286,48 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 
 <p>Here, start averaging the iterates only in the last quarter of the total iterations. This allows the algorithm to have more information to average on. Let’s implement it.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Implementing averaging with SGD
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="c1"># Implementing averaging with SGD
 </span><span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">start_late_averaging</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="n">n_iter</span><span class="o">/</span><span class="mi">4</span>
 <span class="n">averaging_on</span> <span class="o">=</span> <span class="bp">True</span> 
 
 <span class="n">w_sgdar</span><span class="p">,</span> <span class="n">obj_sgdar</span><span class="p">,</span> <span class="n">err_sgdar</span> <span class="o">=</span> <span class="nf">sgd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">steps_switch</span><span class="p">,</span> <span class="n">w_min</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">,</span> <span class="n">averaging_on</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">start_late_averaging</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h3 id="comparing-the-results">Comparing the Results.</h3>
 
 <p>Let’s now compare the difference between SGD with constant, switching and averaging step size and observe their rate of convergence.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Plotting to compare constant stepsize, switchting, switching + averaging
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+</pre></td><td class="rouge-code"><pre><span class="c1"># Plotting to compare constant stepsize, switchting, switching + averaging
 </span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">semilogy</span><span class="p">(</span><span class="n">obj_sgdcr</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">SGD const</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">semilogy</span><span class="p">(</span><span class="n">obj_sgdss</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">SGD switch</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -1464,7 +2350,7 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 <span class="n">plt</span><span class="p">.</span><span class="nf">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">tstar</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="sh">"</span><span class="s">orange</span><span class="sh">"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="sh">'</span><span class="s">dashed</span><span class="sh">'</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">start_late_averaging</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="sh">"</span><span class="s">green</span><span class="sh">"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="sh">'</span><span class="s">dashed</span><span class="sh">'</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <div class="row mt-3 justify-content-center">
     <div class="col-sm-8 mt-3 mt-md-0">
@@ -1491,12 +2377,17 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 <p>Momentum is a technique used to accelerate convergence, especially in scenarios where gradients oscillate. By adding a fraction of the previous update to the current update, this method potentially lead to faster convergence. <strong><em>Please note that I have already given and explained the updare rule for SGD with momentum in \(\eqref{eq:momentum}\).</em></strong></p>
 
 <p>Now let’s implement SGD with momentum:</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">averaging_on</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="n">start_late_averaging</span> <span class="o">=</span> <span class="mf">0.0</span>
 <span class="n">momentum</span> <span class="o">=</span> <span class="mf">1.0</span>
 <span class="n">w_sgdm</span><span class="p">,</span> <span class="n">obj_sgdm</span><span class="p">,</span> <span class="n">err_sgdm</span> <span class="o">=</span> <span class="nf">sgd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span><span class="n">model</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">steps_switch</span><span class="p">,</span> <span class="n">w_min</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">,</span> <span class="n">averaging_on</span><span class="p">,</span> <span class="n">momentum</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">start_late_averaging</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>For simplicity, we have set the momentum parameter to \(1\). However, you can work with different values of momentum to check which one works best.</p>
 
@@ -1504,7 +2395,32 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 
 <p>Let’s now compare the performance of SGD with constant step size, switching step size, switching step size with averaging, and SGD with momentum.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Plotting to compare constant stepsize, switchting, switching + averaging
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+</pre></td><td class="rouge-code"><pre><span class="c1"># Plotting to compare constant stepsize, switchting, switching + averaging
 </span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">semilogy</span><span class="p">(</span><span class="n">obj_sgdcr</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">SGD const</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">semilogy</span><span class="p">(</span><span class="n">obj_sgdss</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">SGD switch</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -1529,7 +2445,7 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 <span class="n">plt</span><span class="p">.</span><span class="nf">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">tstar</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="sh">"</span><span class="s">orange</span><span class="sh">"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="sh">'</span><span class="s">dashed</span><span class="sh">'</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">start_late_averaging</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="sh">"</span><span class="s">purple</span><span class="sh">"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="sh">'</span><span class="s">dashed</span><span class="sh">'</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <div class="row mt-3 justify-content-center">
     <div class="col-sm-8 mt-3 mt-md-0">
@@ -1555,17 +2471,41 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 
 <p>SGD without replacement selects each data point exactly once per epoch, ensuring that the model sees the entire dataset in each pass without replacement.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy.matlib</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="n">numpy.matlib</span>
 <span class="n">niters</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">datapasses</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">matlib</span><span class="p">.</span><span class="nf">repmat</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">replace</span> <span class="o">=</span> <span class="bp">False</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">datapasses</span><span class="p">)</span>
 <span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span><span class="p">.</span><span class="nf">flatten</span><span class="p">()</span>
 <span class="n">w_sgdsw</span><span class="p">,</span> <span class="n">obj_sgdsw</span><span class="p">,</span> <span class="n">err_sgdsw</span> <span class="o">=</span> <span class="nf">sgd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">steps_switch</span><span class="p">,</span> <span class="n">w_min</span><span class="p">,</span> <span class="n">niters</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h3 id="compare-result">Compare Result</h3>
 <p>Let’s now compare the performance of SGD with replacement and without replacement.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Error of objective on a logarithmic scale
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td><td class="rouge-code"><pre><span class="c1"># Error of objective on a logarithmic scale
 </span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">yscale</span><span class="p">(</span><span class="sh">"</span><span class="s">log</span><span class="sh">"</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">plot</span><span class="p">(</span><span class="n">obj_sgdss</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">SGD with replacement</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -1584,7 +2524,7 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 <span class="n">plt</span><span class="p">.</span><span class="nf">xlabel</span><span class="p">(</span><span class="sh">"</span><span class="s">#iterations</span><span class="sh">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">"</span><span class="s">Distance to the minimum</span><span class="sh">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">legend</span><span class="p">()</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <div class="row mt-3 justify-content-center">
     <div class="col-sm-8 mt-3 mt-md-0">
@@ -1611,7 +2551,40 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 <h3 id="gradient-descent-implementation">Gradient Descent Implementation</h3>
 <p>In each iteration of the gradient descent algorithm, the gradient is computed using the entire dataset, and the model’s weights are updated accordingly.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">gd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">w_min</span> <span class="o">=</span><span class="p">[],</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">gd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">w_min</span> <span class="o">=</span><span class="p">[],</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sh">"""</span><span class="s">Gradient descent algorithm
     </span><span class="sh">"""</span>
     <span class="n">w</span> <span class="o">=</span> <span class="n">w0</span><span class="p">.</span><span class="nf">copy</span><span class="p">()</span>
@@ -1644,25 +2617,48 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
                               <span class="p">(</span><span class="sh">"</span><span class="s">%.2e</span><span class="sh">"</span> <span class="o">%</span> <span class="n">obj</span><span class="p">).</span><span class="nf">rjust</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span>
                               <span class="p">(</span><span class="sh">"</span><span class="s">%.2e</span><span class="sh">"</span> <span class="o">%</span> <span class="n">err</span><span class="p">).</span><span class="nf">rjust</span><span class="p">(</span><span class="mi">8</span><span class="p">)]))</span>
     <span class="k">return</span> <span class="n">w</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">(</span><span class="n">objectives</span><span class="p">),</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>To ensure stable convergence in Gradient Descent, we select the step size (<code class="language-plaintext highlighter-rouge">step</code>) as the inverse of the Lipschitz constant of the gradient:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">step</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">model</span><span class="p">.</span><span class="nf">lipschitz_constant</span><span class="p">()</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="n">step</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">model</span><span class="p">.</span><span class="nf">lipschitz_constant</span><span class="p">()</span>
 <span class="n">w_gd</span><span class="p">,</span> <span class="n">obj_gd</span><span class="p">,</span> <span class="n">err_gd</span> <span class="o">=</span> <span class="nf">gd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">w_min</span><span class="p">,</span> <span class="n">datapasses</span><span class="p">)</span>
 <span class="nf">print</span><span class="p">(</span><span class="n">obj_gd</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>To fairly compare GD with SGD, we calculate the computational complexity of GD. Since each step of GD requires a full pass over the dataset, the total computational effort can be represented as:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">complexityofGD</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">datapasses</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">complexityofGD</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">datapasses</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h3 id="compare-results">Compare Results</h3>
 
 <p>Let’s now compare the performance of SGD with GD.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Error of objective on a logarithmic scale
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td><td class="rouge-code"><pre><span class="c1"># Error of objective on a logarithmic scale
 </span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">semilogy</span><span class="p">(</span><span class="n">complexityofGD</span><span class="p">,</span> <span class="n">obj_gd</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">gd</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">semilogy</span><span class="p">(</span><span class="n">obj_sgdss</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">sgd switch</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -1681,7 +2677,7 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 <span class="n">plt</span><span class="p">.</span><span class="nf">xlabel</span><span class="p">(</span><span class="sh">"</span><span class="s"># SGD iterations</span><span class="sh">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">"</span><span class="s">Distance to the minimum</span><span class="sh">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">legend</span><span class="p">()</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -1705,7 +2701,33 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 
 <p>In this final comparison, we focus on the test error, which is important for understanding how well our models generalize to unseen data.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">datapasses</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+</pre></td><td class="rouge-code"><pre><span class="n">datapasses</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
 <span class="n">n_iters</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">datapasses</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
 <span class="c1"># With replacement
 </span><span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">matlib</span><span class="p">.</span><span class="nf">repmat</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">replace</span> <span class="o">=</span> <span class="bp">False</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">datapasses</span><span class="p">)</span>
@@ -1731,13 +2753,24 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 <span class="c1">## GD
 </span><span class="n">step</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">model</span><span class="p">.</span><span class="nf">lipschitz_constant</span><span class="p">()</span>
 <span class="n">w_gd</span><span class="p">,</span> <span class="n">obj_gd</span><span class="p">,</span> <span class="n">err_gdt</span> <span class="o">=</span> <span class="nf">gd</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">w_model_truth</span><span class="p">,</span> <span class="n">datapasses</span><span class="p">)</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <h3 id="compare-result-1">Compare Result</h3>
 
 <p>Let’s compares the test error convergence for Gradient Descent (GD) and Stochastic Gradient Descent with Momentum (SGDm).</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Distance to the minimizer on a logarithmic scale
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre><span class="c1"># Distance to the minimizer on a logarithmic scale
 </span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">yscale</span><span class="p">(</span><span class="sh">"</span><span class="s">log</span><span class="sh">"</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">semilogy</span><span class="p">(</span><span class="n">complexityofGD</span><span class="p">,</span> <span class="n">err_gdt</span> <span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">"</span><span class="s">GD</span><span class="sh">"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -1748,7 +2781,7 @@ where \(\kappa = \frac{L_{\max}}{\mu}\) is the condition number of the problem. 
 <span class="n">plt</span><span class="p">.</span><span class="nf">xlabel</span><span class="p">(</span><span class="sh">"</span><span class="s">#iterations</span><span class="sh">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">"</span><span class="s">Test error</span><span class="sh">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="nf">legend</span><span class="p">()</span>
-</code></pre></div></div>
+</pre></td></tr></tbody></table></code></pre></div></div>
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
