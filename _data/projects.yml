@@ -22,8 +22,8 @@
 
 - title: Transformer-vae
   # url: https://app-cld-predict-21-cassavage.streamlit.app/
-  app: https://app-cld-predict-21-cassavage.streamlit.app/
-  code: https://www.kaggle.com/competitions/ammi-2024-computer-vision/leaderboard
+  # app: https://app-cld-predict-21-cassavage.streamlit.app/
+  code: https://github.com/princeemensah/transformer-prosailvae
   image: transformer-prosailvae.png
-  description: "Utilised the ResNet50 model for cassava leaf disease classification, and built a web app using the model to classify cassava leaf images into one of several categories to help identify common diseases. Won 1st place in the Kaggle competition."
+  description: "Transformer-VAE combines the power of transformer architecture with physics-based radiative transfer modeling for accurate biophysical parameter retrieval from Sentinel-2 satellite imagery. The model leverages self-attention mechanisms to effectively capture complex relationships in spectral data while maintaining physical consistency through the PROSAIL model to significantly improve feature extraction and parameter estimation."
   highlight: 4 
