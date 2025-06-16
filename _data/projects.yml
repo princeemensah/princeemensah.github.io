@@ -1,14 +1,14 @@
 ---
 - title: Text Summarization
   # url: https://github.com/pmensah28/text-summarization-system
-  code: https://github.com/pmensah28/text-summarization-system
+  code: https://github.com/asimzz/text-summarization-system
   image: text_summerization.png
   description: "Developed a full-stack text summarization system with FastAPI backend for authentication and transformer-based summarization. Implemented user-friendly Streamlit frontend for text input and summary visualization, with comprehensive API documentation."
   highlight: 1
 
 - title: Sentiment Analysis
   # url: https://github.com/pmensah28/Sentiment-Analysis
-  code: https://github.com/pmensah28/Sentiment-Analysis
+  code: https://github.com/leemaHmaid/Sentiment-Analysis
   image: sentiment_analysis.png
   description: "Developed an end-to-end ML pipeline for sentiment analysis using BERT, orchestrated with Apache Airflow for automated workflow management. Implemented MLflow for experiment tracking and DVC for data versioning, with FastAPI for model deployment."
   highlight: 2
