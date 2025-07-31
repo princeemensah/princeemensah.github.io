@@ -9,7 +9,7 @@ class: projects
 # Projects
 
 {:.lead}
-Here are some projects I have worked on for school, work, or fun. You can find the code for most of them on [GitHub](https://github.com/princeemensah).
+These are some projects that I have worked on, both personal and teams. Find more: [GitHub](https://github.com/princeemensah).
 
 <div class="grid">
   {% for project in site.data.projects %}
