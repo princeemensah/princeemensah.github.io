@@ -12,9 +12,9 @@ class: home
 My research interest lies in the area of machine learning theory, quantum information theory and topics relating to quantum machine learning & cryptography. 
 <!-- Recently my research focuses on multi-modal learning, diffusion generative models, medical imaging, and geospatial AI. -->
 
-Before my MS degree in Machine Intelligence at the [African Master's in Machine Intelligence](https://aimsammi.org/), I obtained my Bachelor's degree from the [Kwame Nkrumah University of Science and Technology](https://www.knust.edu.gh/), working as a research assistant in the department of mathematics. 
+I have a Master's degree in Machine Learning, a second Master's in Mathematical Sciences, both from the [African Institute for Mathematical Sciences](https://aimsammi.org/) (AIMS), and a Bachelor's degree in Mathematics from the [Kwame Nkrumah University of Science and Technology](https://www.knust.edu.gh/) (KNUST). 
 
-**<span style="color: #ffc000;">I am open to collaboration and actively seeking job opportunities. If you're interested in working together or have opportunities available, please reach out to <a href="mailto:princemensah@aims.edu.gh" style="color: #3eb7f0;">me!</a></span>**
+**<span style="color: #ffc000;">I am open to collaboration and actively seeking PhD opportunities. If you're interested in working together or have opportunities available, please reach out to <a href="mailto:princemensah@aims.edu.gh" style="color: #3eb7f0;">me!</a></span>**
 
 <p class="social-links">
   <!-- <a href="https://scholar.google.com/citations?user=Kq0dhLAAAAAJ&hl"><i class="ai ai-google-scholar-square"></i> Google Scholar</a> &nbsp;&bull;&nbsp; -->
