@@ -22,12 +22,13 @@ footer {
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    max-width: $content-width + 2 * $spacing-unit;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 $spacing-unit;
+    padding: 0 10px;
   }
 
   .footer-col {
+    float: left;
     margin-bottom: 0;
     padding: 0 3px;
     box-sizing: border-box;
@@ -81,7 +82,7 @@ footer {
     .container {
       flex-direction: column;
       text-align: center;
-      padding: 0 calc($spacing-unit/2);
+      padding: 0 15px;
     }
     
     .footer-col {
