@@ -9,11 +9,10 @@ class: home
 <div class="columns" markdown="1">
 
 <div class="intro" markdown="1">
-I recently completed my internship at [InstaDeep](https://www.instadeep.com/) as an AI Research Engineer, advised by [Arnu Pretorius](https://www.linkedin.com/in/arnupretorius/) and mentored by [Ibrahim Salihu Yusuf](https://www.linkedin.com/in/ibrahim-salihu-yusuf-721103100/). 
-My research interests lie broadly in machine learning, representation learning, geospatial AI, and AI for healthcare. 
+My research interest lies in the area of machine learning theory, quantum information theory and topics relating to quantum machine learning & cryptography. 
 <!-- Recently my research focuses on multi-modal learning, diffusion generative models, medical imaging, and geospatial AI. -->
 
-Before my MS degree in Machine Intelligence at the [African Master's in Machine Intelligence](https://aimsammi.org/), I obtained my Bachelor's degree from the [Kwame Nkrumah University of Science and Technology](https://www.knust.edu.gh/), working as a research assistant in the department of mathematics. I have experience developing end-to-end AI solutions—from fine-tuning models to deploying web interfaces and passionate about solving real-world problems through intelligent automation and scalable software architecture.
+Before my MS degree in Machine Intelligence at the [African Master's in Machine Intelligence](https://aimsammi.org/), I obtained my Bachelor's degree from the [Kwame Nkrumah University of Science and Technology](https://www.knust.edu.gh/), working as a research assistant in the department of mathematics. 
 
 **<span style="color: #ffc000;">I am open to collaboration and actively seeking job opportunities. If you're interested in working together or have opportunities available, please reach out to <a href="mailto:princemensah@aims.edu.gh" style="color: #3eb7f0;">me!</a></span>**
 
