@@ -261,7 +261,7 @@
     .news-travel {
       margin-top: $spacing-unit;
       flex-direction: column;
-      margin-bottom: $spacing-unit / 2;
+      margin-bottom: calc($spacing-unit / 2);
 
       .travel {
         padding-left: 0;
