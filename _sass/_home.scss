@@ -167,6 +167,7 @@
     flex-direction: row;
 
     font-size: 0.9em;
+    margin-bottom: $spacing-unit;
 
     & > div {
       flex-grow: 1;
@@ -175,19 +176,36 @@
   }
 
   .news {
+    font-size: 1.05em;
+
     ul {
       list-style: none;
-      margin-left: 0;
+      margin: 0;
+      padding: 0;
 
       li {
-        margin-bottom: 1em;
+        display: flex;
+        align-items: flex-start;
+        gap: 1em;
+        margin-bottom: 0.9em;
+        line-height: 1.35;
       }
+    }
 
-      time {
-        display: block;
-        color: $grey-color;
-        font-size: 0.8em;
+    .news-date {
+      font-weight: 600;
+      color: $grey-color-light;
+      white-space: nowrap;
+      flex-shrink: 0;
+
+      &::after {
+        content: ":";
+        margin-left: 0.25em;
       }
+    }
+
+    .news-text {
+      flex: 1;
     }
   }
 
@@ -243,10 +261,20 @@
     .news-travel {
       margin-top: $spacing-unit;
       flex-direction: column;
+      margin-bottom: $spacing-unit / 2;
 
       .travel {
         padding-left: 0;
       }
+    }
+
+    .news ul li {
+      flex-direction: column;
+      gap: 0.4em;
+    }
+
+    .news-date::after {
+      margin-left: 0.2em;
     }
   }
 }

@@ -34,25 +34,60 @@ I have a Master's degree in Machine Learning, a second Master's in Mathematical 
 </picture>
 
 {:.no-list}
-* <a href="mailto:princemensah@aims.edu.gh">princemensah@aims.edu.gh</a>
+<!-- * <a href="mailto:princemensah@aims.edu.gh">princemensah@aims.edu.gh</a> -->
 </div>
 
 </div>
 
-## Featured <a href="{{ "/projects/" | relative_url }}">Projects</a>
+<div class="news-travel" markdown="1">
 
-<div class="featured-projects">
-  {% assign sorted_projects = site.data.projects | sort: 'highlight' %}
-  {% for project in sorted_projects %}
-    {% if project.highlight %}
-      {% include project.html project=project %}
+<div class="news" markdown="1">
+## News
+
+<ul>
+{% for item in site.data.news %}
+  <li>
+    <span class="news-date">{{ item.date | date: "%b, %d, %Y" }}</span>
+    <span class="news-text">{{ item.description | markdownify | strip_newlines | remove: '<p>' | remove: '</p>' }}</span>
+  </li>
+{% endfor %}
+</ul>
+
+</div>
+
+</div>
+
+## Publication
+
+<div class="pubs home-pubs">
+  {% for pub in site.data.publications limit:3 %}
+  <article class="publication">
+    <h3>
+      {% if pub.url %}
+      <a href="{{ pub.url }}" target="_blank" rel="noopener">{{ pub.title }}</a>
+      {% else %}
+      {{ pub.title }}
+      {% endif %}
+    </h3>
+    <p class="authors">{{ pub.authors }}</p>
+    <p class="venue"><em>{{ pub.venue }}</em></p>
+    {% if pub.description %}
+    <p>{{ pub.description }}</p>
     {% endif %}
+    {% if pub.links %}
+    <div class="extra-links">
+      {% for link in pub.links %}
+      <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </article>
   {% endfor %}
 </div>
 
-<a href="{{ "/projects/" | relative_url }}" class="button">
+<a href="{{ "/publications/" | relative_url }}" class="button">
   <i class="fas fa-chevron-circle-right"></i>
-  Show More Projects
+  Show All Publications
 </a>
 
 <!-- ## Featured <a href="{{ "/publications/" | relative_url }}">Publications</a>

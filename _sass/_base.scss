@@ -13,7 +13,7 @@ html, body {
 html {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
-  font-family: 'Volkhov', serif;
+  font-family: $base-font-family;
   font-size: 16px;
   line-height: 1.5;
   color: $text-color;
@@ -28,7 +28,7 @@ html {
 }
 
 body {
-  font-family: 'Volkhov', serif;
+  font-family: $base-font-family;
   font-size: $base-font-size;
   line-height: $base-line-height;
   color: $text-color;
