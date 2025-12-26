@@ -9,7 +9,7 @@ class: home
 <div class="columns" markdown="1">
 
 <div class="intro" markdown="1">
-My research interest lies in the area of machine learning theory, quantum information theory and topics relating to quantum machine learning & cryptography. 
+My research interest lies in the area of machine learning theory, quantum information theory and topics relating to quantum machine learning & condensed matter physics. 
 <!-- Recently my research focuses on multi-modal learning, diffusion generative models, medical imaging, and geospatial AI. -->
 
 I have a Master's degree in Machine Learning, a second Master's in Mathematical Sciences, both from the [African Institute for Mathematical Sciences](https://aimsammi.org/) (AIMS), and a Bachelor's degree in Mathematics from the [Kwame Nkrumah University of Science and Technology](https://www.knust.edu.gh/) (KNUST). 
