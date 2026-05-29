@@ -9,7 +9,7 @@ class: home
 <div class="columns" markdown="1">
 
 <div class="intro" markdown="1">
-I'm interested in doing further research in the area machine learning theory, physics-informed neural networks geospatial machine learning and topics related to quantum information processing and quantum machine learning.
+I'm interested in doing further research in the area machine learning theory, physics-informed neural networks, geospatial machine learning and topics related to quantum information processing and quantum machine learning.
 
 <!-- Recently my research focuses on multi-modal learning, diffusion generative models, medical imaging, and geospatial AI. -->
 
